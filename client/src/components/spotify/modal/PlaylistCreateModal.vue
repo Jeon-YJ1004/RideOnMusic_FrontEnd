@@ -6,10 +6,11 @@ import { useRouter } from "vue-router";
 import store from "@/stores";
 // import playlists from "@/api/spotify/playlists";
 
-const { VITE_OPENAI_API_KEY } = import.meta.env;
+const { VITE_NODE_EXPRESS_URI } = import.meta.env;
 const name = ref("");
 const description = ref("");
 const playlistStore = store.usePlaylistStore();
+const tokenStore = store.useTokenStore();
 
 const clearForm = () => {
   name.value = "";
@@ -39,6 +40,33 @@ const options = ref([
     { text: "2020년대", value: "2020s" },
   ],
 ]);
+
+const searchRecommendTrack = async (artist, song) => {
+  axios
+    .post(`${VITE_NODE_EXPRESS_URI}/spotif/searchRecommendTrack`, {
+      accessToken: tokenStore.accessToken,
+      artist: artist,
+      song: song,
+    })
+    .then((res) => {
+      // console.log(res.data);
+      searchResults.value = res.data.tracks.items.map((track) => ({
+        artist: track.artists[0].name,
+        title: track.name,
+        id: track.id,
+        uri: track.uri,
+        albumUrl: track.album.images.reduce((smallest, image) => {
+          if (image.height < smallest.height) return image;
+          return smallest;
+        }, track.album.images[0]).url,
+      }));
+      // nextPageUrl.value = response.body.tracks.next;
+      // console.log(res.data)
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 // const validate = () => {
 //   let valid = true;
 
@@ -54,15 +82,37 @@ const options = ref([
 
 //   return valid;
 // };
-const setHashTag = () => {
-  axios
-    .post(`${VITE_OPENAI_API_KEY}/chatgptapi/setHashTag`, {
-      hashtages: {},
-      userInfo: {},
-    })
-    .then((res) => {
-      console.log(res.data);
-    });
+const setHashTag = (id) => {
+  // axios
+  //   .post(`${VITE_NODE_EXPRESS_URI}/chatgpt/setHashTag`, {
+  //     hashtags: selected.value,
+  //     userInfo: { gender: "male", age: 20 },
+  //     playlistId: id,
+  //   })
+  //   .then((res) => {
+  //     console.log(res.data);
+  //   });
+  let tmp = [
+    { artist: "AC/DC", song: "Back in Black" },
+    { artist: "Queen", song: "Another One Bites the Dust" },
+    { artist: "Guns N' Roses", song: "Sweet Child o' Mine" },
+    { artist: "Journey", song: "Don't Stop Believin'" },
+    { artist: "Bon Jovi", song: "Livin' on a Prayer" },
+    { artist: "The Police", song: "Every Breath You Take" },
+  ];
+  const recommendedSongs = tmp;
+  // console.log(recommendedSongs);
+  let recommendedSongUris = [];
+  // 노래 검색
+  tokenStore.refresh();
+  for (let index = 0; index < recommendedSongs.length; index++) {
+    const { artist, song } = recommendedSongs[index];
+    searchRecommendTrack(artist, song)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  }
 };
 const makePlaylist = () => {
   //TODO - spotify랑 연결
@@ -73,7 +123,9 @@ const create = async () => {
   // if (validate()) {
   try {
     const response = await playlistStore.createPlaylist(name.value, description.value);
-    setHashTag();
+    // console.log(response.data);
+
+    setHashTag(response.data);
     clearForm();
   } catch (e) {
     console.log(e);
@@ -114,6 +166,7 @@ onMounted(() => {});
                 </option>
               </select>
             </div>
+            <button @click="setHashTag">해쉬태그</button>
             <form class="form-floating mb-3">
               <input
                 type="name"

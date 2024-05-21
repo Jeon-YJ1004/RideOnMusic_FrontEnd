@@ -1,6 +1,12 @@
 import express from "express";
 import SpotifyWebApi from "spotify-web-api-node";
 
+const spotifyApi = new SpotifyWebApi({
+  redirectUri: process.env.REDIRECT_URI,
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+});
+
 // dotenv.config();
 // const app = express();
 // router.use(cors());
@@ -10,11 +16,6 @@ import SpotifyWebApi from "spotify-web-api-node";
 
 const router = express.Router();
 
-const spotifyApi = new SpotifyWebApi({
-  redirectUri: process.env.REDIRECT_URI,
-  clientId: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
-});
 // SECTION - token
 router.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken;
@@ -35,6 +36,7 @@ router.post("/refresh", (req, res) => {
 
 router.post("/login", (req, res) => {
   const code = req.body.code;
+  console.log("login", process.env.CLIENT_ID, process.env.CLIENT_SECRET);
   // spotifyApi.setRedirectURI(process.env.REDIRECT_URI);
   spotifyApi
     .authorizationCodeGrant(code)
@@ -209,5 +211,46 @@ router.post("/search", (req, res) => {
     }
   );
 });
+router.post("/searchSongs", (req, res) => {
+  const accessToken = req.body.accessToken;
+  const keyword = req.body.keyword;
+  const offset = req.body.offset;
+  spotifyApi.setAccessToken(accessToken);
+  // console.log(offset)
+  spotifyApi.searchTracks(keyword, { limit: 10, offset: offset }).then(
+    function (data) {
+      // console.log('Search by'+ keyword, data.body);
+      res.json(data.body);
+    },
+    function (err) {
+      console.log("Something went wrong!", err);
+    }
+  );
+});
+router.post("/searchRecommendTrack", (req, res) => {
+  const accessToken = req.body.accessToken;
+  const song = req.body.song;
+  const artist = req.body.artist;
+  spotifyApi.setAccessToken(accessToken);
+  // console.log(offset)
+  spotifyApi.searchTracks(`track:${song} artist:${artist}`, { limit: 1, offset: 0 }).then(
+    function (data) {
+      console.log(
+        `Search tracks by "${song}" in the track name and "${artist}" in the artist name`,
+        data.body
+      );
+    },
+    function (err) {
+      console.log("Something went wrong!", err);
+    }
+  );
+});
+function searchRecommendTrack(accessToken, artist, song, success, fail) {
+  spotifyApi.setAccessToken(accessToken);
+  spotifyApi
+    .searchTracks(`track:${song} artist:${artist}`, { limit: 1, offset: 0 })
+    .then(success)
+    .catch(fail);
+}
 
 export default router;
