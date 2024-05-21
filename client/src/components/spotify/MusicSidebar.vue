@@ -84,11 +84,11 @@ onMounted(() => {
             ></button>
           </div>
 
-          <div class="offcanvas-body">
+          <div class="offcanvas-body" >
             <template v-if="accessToken">
               <!-- //TODO - plan에 해당하는 플리가 있을 경우 -->
               <template v-if="hasPlaylist">
-                <div style="height: 60%">
+                <div style="height: 60% ">
                   <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <li class="nav-item dropdown">
                       <a
@@ -110,6 +110,8 @@ onMounted(() => {
                       </ul> -->
                     </li>
                   </ul>
+                  <button @click="playlistStore.getPlaylist()">플리 업뎃</button>
+
                   <SearchModal />
                   <Playlist />
                   <button
@@ -123,7 +125,7 @@ onMounted(() => {
                 </div>
               </template>
               <template v-else>
-                <div>
+                <div style="display: flex; justify-content: center;">
                   <PlaylistCreateModal />
                 </div>
               </template>

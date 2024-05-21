@@ -43,6 +43,7 @@ export const useTokenStore = defineStore(
     };
 
     const refresh = () => {
+      console.log("refresh");
       const router = useRouter();
       if (!refreshToken.value || !expiresIn.value) return;
       if (refreshInterval.value) {
