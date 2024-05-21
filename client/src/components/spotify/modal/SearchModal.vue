@@ -3,20 +3,16 @@ import { onMounted, ref, watch, onUnmounted } from "vue";
 import axios from "axios";
 import InfiniteLoading from "v3-infinite-loading";
 import "v3-infinite-loading/lib/style.css";
-
 import store from "@/stores";
 import TrackSearchResult from "@/components/spotify/item/TrackSearchResultItem.vue";
-
 const tokenStore = store.useTokenStore();
 // const searchStore = store.useSearchStore();
 const searchResults = ref([]);
 const limit = 10;
-
 const searchword = ref("");
 let page = 1;
 const noResult = ref(false);
 const message = ref("");
-
 // 노래 검색
 const search = async ($state) => {
   // console.log("searchTracks"+page.value)
@@ -51,7 +47,6 @@ const search = async ($state) => {
       $state.error();
     });
 };
-
 watch(searchword, async (newSearch) => {
   if (newSearch) {
     try {
@@ -129,7 +124,6 @@ onMounted(() => {});
   flex-direction: column;
   align-items: center;
 }
-
 .result {
   display: flex;
   flex-direction: row;

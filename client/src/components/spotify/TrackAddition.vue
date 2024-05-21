@@ -2,7 +2,6 @@
 import { watch } from "vue";
 import store from "@/stores";
 import { storeToRefs } from "pinia";
-
 const emit = defineEmits(["add-track"]);
 const props = defineProps({
   trackID: {
@@ -14,7 +13,6 @@ const props = defineProps({
     default: "",
   },
 });
-
 const addTracke = () => {
   emit("add-track");
 };

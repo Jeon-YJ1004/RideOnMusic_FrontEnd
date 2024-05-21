@@ -1,16 +1,12 @@
 <script setup>
 import { defineProps } from "vue";
 import store from "@/stores";
-
 import TrackAddition from "@/components/spotify/TrackAddition.vue";
-
 const trackStore = store.useTrackStore();
-
 const props = defineProps({
   track: Object,
   chooseTrack: Function,
 });
-
 const addTrack = () => {
   // playlistStore.addtracks(track);
   trackStore.addTrack(props.track);

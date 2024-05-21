@@ -2,28 +2,22 @@
 import { ref, reactive, onMounted, watch, onUnmounted } from "vue";
 import { storeToRefs } from "pinia";
 import draggable from "vuedraggable";
-
 import store from "@/stores";
 import Playlist from "@/components/spotify/Playlist.vue";
 import Login from "@/components/spotify/Login.vue";
 import PlaylistCreateModal from "@/components/spotify/modal/PlaylistCreateModal.vue";
 import SearchModal from "@/components/spotify/modal/SearchModal.vue";
-
 const tokenStore = store.useTokenStore();
 const playlistStore = store.usePlaylistStore();
-
 const { accessToken, code } = storeToRefs(tokenStore);
 const { playlist, hasPlaylist } = storeToRefs(playlistStore);
-
 const search = ref("");
-
 const savePlayList = () => {
   playlistStore.savePlaylist();
   // console.log(response);
   alert("저장되었습니다. 잊지 말고 플랜 저장을 해주세요!");
   // else alert("저장에 실패했습니다.");
 };
-
 const removeableList = ref([{ id: 1 }]);
 const log = () => {
   console.log(removeableList.value);
@@ -161,21 +155,17 @@ onMounted(() => {
   letter-spacing: -2.5px;
   text-align: left;
 }
-
 :deep(.b-sidebar-body) {
   overflow-y: hidden !important;
   overflow-x: hidden;
 }
-
 :deep(.nav-tabs) {
   flex-wrap: nowrap;
   overflow-x: scroll;
 }
-
 :deep(ul.nav-tabs li a.nav-link) {
   white-space: nowrap;
 }
-
 body {
   overscroll-behavior: contain;
 }

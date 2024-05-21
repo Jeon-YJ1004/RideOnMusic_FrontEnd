@@ -1,8 +1,6 @@
 <script setup>
 import { computed } from "vue";
-
 const props = defineProps(["track", "searchEl"]);
-
 const removeTrack = async () => {
   try {
     // await emit("savedTrackRemove", props.trackID);
@@ -61,7 +59,6 @@ const computedTrack = computed(() => {
   -ms-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
-
 #result-item-container:hover {
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
@@ -74,11 +71,9 @@ const computedTrack = computed(() => {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-
 .rad {
   border-radius: 100%;
 }
-
 .btn-primary-standard-n {
   border: none;
   color: rgba(3, 149, 165, 1) !important;
@@ -89,7 +84,6 @@ const computedTrack = computed(() => {
   -ms-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
 }
-
 .btn-primary-standard-n:hover {
   -webkit-transition: all 0.2s ease-in-out;
   -moz-transition: all 0.2s ease-in-out;
@@ -99,7 +93,6 @@ const computedTrack = computed(() => {
   color: rgba(2, 87, 140, 1) !important;
   transform: scale(1.1);
 }
-
 .btn-gray {
   border: none;
   color: rgb(90, 90, 90) !important;
@@ -119,25 +112,20 @@ const computedTrack = computed(() => {
   transition: all 0.2s ease-in-out;
   transform: scale(1.1);
 }
-
 .bold-border-gray {
   stroke: rgba(90, 90, 90, 1) !important;
   stroke-width: 0.15px;
 }
-
 .bold-border-gray:hover {
   stroke: rgba(50, 50, 50, 1) !important;
 }
-
 .bold-border {
   stroke: rgba(3, 149, 165, 1) !important;
   stroke-width: 0.15px;
 }
-
 .bold-border:hover {
   stroke: rgba(2, 87, 140, 1) !important;
 }
-
 :deep(.card-body) {
   width: 100%;
   padding: 0px;
