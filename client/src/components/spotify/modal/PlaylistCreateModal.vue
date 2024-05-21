@@ -40,33 +40,6 @@ const options = ref([
     { text: "2020년대", value: "2020s" },
   ],
 ]);
-
-const searchRecommendTrack = async (artist, song) => {
-  axios
-    .post(`${VITE_NODE_EXPRESS_URI}/spotif/searchRecommendTrack`, {
-      accessToken: tokenStore.accessToken,
-      artist: artist,
-      song: song,
-    })
-    .then((res) => {
-      // console.log(res.data);
-      searchResults.value = res.data.tracks.items.map((track) => ({
-        artist: track.artists[0].name,
-        title: track.name,
-        id: track.id,
-        uri: track.uri,
-        albumUrl: track.album.images.reduce((smallest, image) => {
-          if (image.height < smallest.height) return image;
-          return smallest;
-        }, track.album.images[0]).url,
-      }));
-      // nextPageUrl.value = response.body.tracks.next;
-      // console.log(res.data)
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
 // const validate = () => {
 //   let valid = true;
 
@@ -82,50 +55,16 @@ const searchRecommendTrack = async (artist, song) => {
 
 //   return valid;
 // };
-const setHashTag = (id) => {
-  // axios
-  //   .post(`${VITE_NODE_EXPRESS_URI}/chatgpt/setHashTag`, {
-  //     hashtags: selected.value,
-  //     userInfo: { gender: "male", age: 20 },
-  //     playlistId: id,
-  //   })
-  //   .then((res) => {
-  //     console.log(res.data);
-  //   });
-  let tmp = [
-    { artist: "AC/DC", song: "Back in Black" },
-    { artist: "Queen", song: "Another One Bites the Dust" },
-    { artist: "Guns N' Roses", song: "Sweet Child o' Mine" },
-    { artist: "Journey", song: "Don't Stop Believin'" },
-    { artist: "Bon Jovi", song: "Livin' on a Prayer" },
-    { artist: "The Police", song: "Every Breath You Take" },
-  ];
-  const recommendedSongs = tmp;
-  // console.log(recommendedSongs);
-  let recommendedSongUris = [];
-  // 노래 검색
-  tokenStore.refresh();
-  for (let index = 0; index < recommendedSongs.length; index++) {
-    const { artist, song } = recommendedSongs[index];
-    searchRecommendTrack(artist, song)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err));
-  }
-};
-const makePlaylist = () => {
-  //TODO - spotify랑 연결
-  //TODO - back서버와 연결해서 plan의 playlist id 저장
+const setHashTag = () => {
+  playlistStore.getPlaylist();
 };
 
 const create = async () => {
   // if (validate()) {
   try {
-    const response = await playlistStore.createPlaylist(name.value, description.value);
-    // console.log(response.data);
-
-    setHashTag(response.data);
+    await playlistStore.createPlaylist(name.value, description.value, selected.value);
+    await playlistStore.setHashTag(selected.value);
+    await playlistStore.getPlaylist();
     clearForm();
   } catch (e) {
     console.log(e);

@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import OpenAI from "openai";
-
+import { addTracks, searchRecommendTrack } from "./spotifyRouter.js";
 dotenv.config();
 
 const router = express.Router();
@@ -14,9 +14,12 @@ router.post("/setHashTag", (req, res) => {
   const hashtags = req.body.hashtags;
   const userInfo = req.body.userInfo;
   const accessToken = req.body.accessToken;
+  const playlistId = req.body.playlistId;
 
+  let recommendedSongUris = [];
+  console.log("set hashtag" + playlistId);
   let testPrompt = "recommend me one song";
-  let prompt = `Can you recommend 10 songs based on the following preferences:
+  let prompt = `Can you recommend 2 songs based on the following preferences:
               Genre: ${hashtags.genre}
               Travel Purpose: ${hashtags.travelPurpose}
               Prefer artists: [${hashtags.artists}]
@@ -31,37 +34,59 @@ router.post("/setHashTag", (req, res) => {
       messages: [{ role: "system", content: prompt }],
       model: "gpt-3.5-turbo",
       temperature: 0,
-      max_tokens: 1,
+      max_tokens: 200,
     })
     .then((res) => {
-      console.log(res.choices[0].message);
+      console.log("지피티 함수");
       // const { choices } = res.data;
-      const recommendedSongs = res.choices[0].message.content.replace(/\n/g, "");
-      console.log(recommendedSongs);
+      let recommendedSongs = res.choices[0].message.content.replace(/\n/g, "");
+      recommendedSongs = JSON.parse(recommendedSongs);
+      // console.log("json chatgpt answer " + recommendedSongs);
       //TODO - 노래들 spotify 플리에 추가하기
-      let recommendedSongUris = [];
-      // 노래 검색
       for (let index = 0; index < recommendedSongs.length; index++) {
-        const { artist, song } = array[index];
+        const { artist, song } = recommendedSongs[index];
         searchRecommendTrack(
           accessToken,
           artist,
           song,
-          ({ data }) => {
-            console.log(
-              `Search tracks by "${song}" in the track name and "${artist}" in the artist name`,
-              data.body
+          (response) => {
+            const res = response.body.tracks.items.map((item) => item.uri);
+            recommendedSongUris.push(res[0]);
+            console.log("in for문 " + index);
+            addTracks(
+              accessToken,
+              playlistId,
+              res,
+              (data) => {
+                console.log(data);
+              },
+              (error) => {
+                console.log(error);
+              }
             );
+            // console.log("in for문 " + recommendedSongUris);
           },
           (error) => {
             console.log(error);
           }
         );
       }
-      //노래 추가
-
-      // app.get("/search? q=remaster%2520track%3ADoxy%2520artist%3AMiles%2520Davis", (req, res) => {})
     })
+    // .then(() => {
+    //   //노래 추가
+    //   console.log("recommendedSongUri" + recommendedSongUris);
+    //   addTracks(
+    //     accessToken,
+    //     playlistId,
+    //     recommendedSongUris,
+    //     (data) => {
+    //       console.log(data);
+    //     },
+    //     (error) => {
+    //       console.log(error);
+    //     }
+    //   );
+    // })
     .catch((error) => {
       console.error("Error calling OpenAI API:", error);
       res.status(500).json({ error: "Failed to generate text from OpenAI API" });

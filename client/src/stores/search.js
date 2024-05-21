@@ -43,7 +43,7 @@ export const useSearchStore = defineStore(
     };
     const searchRecommendTrack = async (artist, song) => {
       axios
-        .post(`${VITE_NODE_EXPRESS_URI}/spotif/searchRecommendTrack`, {
+        .post(`${VITE_NODE_EXPRESS_URI}/spotify/searchRecommendTrack`, {
           accessToken: tokenStore.accessToken,
           artist: artist,
           song: song,

@@ -15,7 +15,7 @@ export const usePlaylistStore = defineStore(
     const hasPlaylist = ref(false);
     const planPlaylistId = ref(null);
 
-    const createPlaylist = async (name, desc) => {
+    const createPlaylist = async (name, desc, hashtags) => {
       axios
         .post(`${VITE_NODE_EXPRESS_URI}/spotify/createPlaylist`, {
           accessToken: tokenStore.accessToken,
@@ -38,17 +38,58 @@ export const usePlaylistStore = defineStore(
           // console.log(res.data);
           // router.push("/");
         })
+        // .then((data) => {
+        //   console.log("set hashtag");
+        //   setHashTag(hashtags);
+        // })
+        // .then((data) => getPlaylist())
         .catch((error) => {
           // router.push("/");
           console.log(error);
         });
     };
+    const setHashTag = (hashtags) => {
+      axios
+        .post(`${VITE_NODE_EXPRESS_URI}/chatgpt/setHashTag`, {
+          hashtags: hashtags,
+          userInfo: { gender: "male", age: 20 },
+          playlistId: planPlaylistId.value,
+          accessToken: tokenStore.accessToken,
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        // .then((data) => getPlaylist())
+        .catch((error) => {
+          console.log(error);
+        });
+      // let tmp = [
+      //   { artist: "AC/DC", song: "Back in Black" },
+      //   { artist: "Queen", song: "Another One Bites the Dust" },
+      //   { artist: "Guns N' Roses", song: "Sweet Child o' Mine" },
+      //   { artist: "Journey", song: "Don't Stop Believin'" },
+      //   { artist: "Bon Jovi", song: "Livin' on a Prayer" },
+      //   { artist: "The Police", song: "Every Breath You Take" },
+      // ];
+      // const recommendedSongs = tmp;
+      // // console.log(recommendedSongs);
+      // let recommendedSongUris = [];
+      // // 노래 검색
+      // for (let index = 0; index < recommendedSongs.length; index++) {
+      //   const { artist, song } = recommendedSongs[index];
+      //   searchRecommendTrack(artist, song)
+      //     .then((res) => {
+      //       console.log(res);
+      //     })
+      //     .catch((err) => console.log(err));
+      // }
+    };
 
     const getPlaylist = async () => {
+      console.log("getPlaylist!!!!!!!!!");
       axios
         .post(`${VITE_NODE_EXPRESS_URI}/spotify/getPlaylist`, {
           accessToken: tokenStore.accessToken,
-          // playlistId: "3cEYpjA9oz9GiPac4AsH4n",
           playlistId: planPlaylistId.value,
         })
         .then((res) => {
@@ -144,6 +185,7 @@ export const usePlaylistStore = defineStore(
       addtracks,
       removetracks,
       savePlaylist,
+      setHashTag,
     };
   },
   {
