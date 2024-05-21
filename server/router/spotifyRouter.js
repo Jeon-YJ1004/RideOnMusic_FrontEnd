@@ -37,7 +37,6 @@ spotifyRouter.post("/refresh", (req, res) => {
 
 spotifyRouter.post("/login", (req, res) => {
   const code = req.body.code;
-  console.log("login", process.env.CLIENT_ID, process.env.CLIENT_SECRET);
   // spotifyApi.setRedirectURI(process.env.REDIRECT_URI);
   spotifyApi
     .authorizationCodeGrant(code)
@@ -121,10 +120,10 @@ spotifyRouter.post("/createPlaylist", (req, res) => {
 });
 
 spotifyRouter.post("/getPlaylist", (req, res) => {
-  console.log("getPlaylist!!!!!!!!!");
 
   const playlistId = req.body.playlistId;
   // const playlistId = "1Y7LZa32wLeB7IMAhrGiwL";
+  console.log("getPlaylist!!!!!!!!!" + playlistId);
 
   const accessToken = req.body.accessToken;
   spotifyApi.setAccessToken(accessToken);
@@ -249,16 +248,21 @@ spotifyRouter.post("/searchSongs", (req, res) => {
 //     }
 //   );
 // });
-function searchRecommendTrack(accessToken, artist, song, success, fail) {
+async function searchRecommendTrack(accessToken, artist, song) {
+  // console.log(artist, song,)
   spotifyApi.setAccessToken(accessToken);
-  spotifyApi
-    .searchTracks(`track:${song} artist:${artist}`, { limit: 1, offset: 0 })
-    .then(success)
-    .catch(fail);
+  try {
+    const data = await spotifyApi.searchTracks(`track:${song} artist:${artist}`, { limit: 1, offset: 0 });
+    // console.log('Search result:', data.body);
+    return data;
+  } catch (err) {
+    console.log("Something went wrong!", err);
+  }
+
 }
 
 function addTracks(accessToken, playlistId, trakUris, success, fail) {
-  console.log("addTrack " + trakUris + "playlistId" + playlistId);
+  console.log("addTrack " + trakUris + "  playlistId " + playlistId);
   spotifyApi.setAccessToken(accessToken);
   spotifyApi.addTracksToPlaylist(playlistId, trakUris).then(success).catch(fail);
 }

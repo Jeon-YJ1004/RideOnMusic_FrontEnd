@@ -16,7 +16,9 @@ export const usePlaylistStore = defineStore(
     const planPlaylistId = ref(null);
 
     const createPlaylist = async (name, desc, hashtags) => {
-      axios
+      console.log(planPlaylistId.value);
+      if (planPlaylistId.value) return;
+      return axios
         .post(`${VITE_NODE_EXPRESS_URI}/spotify/createPlaylist`, {
           accessToken: tokenStore.accessToken,
           name: name,
@@ -49,44 +51,22 @@ export const usePlaylistStore = defineStore(
         });
     };
     const setHashTag = (hashtags) => {
-      axios
-        .post(`${VITE_NODE_EXPRESS_URI}/chatgpt/setHashTag`, {
-          hashtags: hashtags,
-          userInfo: { gender: "male", age: 20 },
-          playlistId: planPlaylistId.value,
-          accessToken: tokenStore.accessToken,
-        })
-        .then((res) => {
-          console.log(res.data);
-        })
-        // .then((data) => getPlaylist())
-        .catch((error) => {
-          console.log(error);
-        });
-      // let tmp = [
-      //   { artist: "AC/DC", song: "Back in Black" },
-      //   { artist: "Queen", song: "Another One Bites the Dust" },
-      //   { artist: "Guns N' Roses", song: "Sweet Child o' Mine" },
-      //   { artist: "Journey", song: "Don't Stop Believin'" },
-      //   { artist: "Bon Jovi", song: "Livin' on a Prayer" },
-      //   { artist: "The Police", song: "Every Breath You Take" },
-      // ];
-      // const recommendedSongs = tmp;
-      // // console.log(recommendedSongs);
-      // let recommendedSongUris = [];
-      // // 노래 검색
-      // for (let index = 0; index < recommendedSongs.length; index++) {
-      //   const { artist, song } = recommendedSongs[index];
-      //   searchRecommendTrack(artist, song)
-      //     .then((res) => {
-      //       console.log(res);
-      //     })
-      //     .catch((err) => console.log(err));
-      // }
+      console.log("set hashtag " + planPlaylistId.value);
+      return axios.post(`${VITE_NODE_EXPRESS_URI}/chatgpt/setHashTag`, {
+        hashtags: hashtags,
+        userInfo: { gender: "male", age: 20 },
+        playlistId: planPlaylistId.value,
+        accessToken: tokenStore.accessToken,
+      }).then((res) => {
+        console.log(res.data);
+      });
     };
 
     const getPlaylist = async () => {
-      console.log("getPlaylist!!!!!!!!!");
+      if (!planPlaylistId.value) {
+        console.log("planPlaylistId is null");
+        return;
+      }
       axios
         .post(`${VITE_NODE_EXPRESS_URI}/spotify/getPlaylist`, {
           accessToken: tokenStore.accessToken,

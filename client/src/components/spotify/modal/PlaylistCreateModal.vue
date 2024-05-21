@@ -55,13 +55,9 @@ const options = ref([
 
 //   return valid;
 // };
-const setHashTag = () => {
-  playlistStore.getPlaylist();
-};
-
 const create = async () => {
   // if (validate()) {
-  try {
+    try {
     await playlistStore.createPlaylist(name.value, description.value, selected.value);
     await playlistStore.setHashTag(selected.value);
     await playlistStore.getPlaylist();
@@ -82,6 +78,7 @@ onMounted(() => {});
       class="btn btn-outline-primary bg-light"
       data-bs-toggle="modal"
       data-bs-target="#creatPLModal"
+      style="width:auto"
     >
       기깔난 플리 만들기
     </button>
@@ -90,7 +87,7 @@ onMounted(() => {});
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-dark">
           <div class="modal-body">
-            <a class="nav-link active" aria-current="page" href="#">해쉬태그 정하기</a>
+            <a class="nav-link active" aria-current="page" href="#">노래 추천이 필요하다면 해쉬 태그를 설정해 주세요</a>
             <div class="col">
               {{ selected }}
               <select
@@ -105,7 +102,6 @@ onMounted(() => {});
                 </option>
               </select>
             </div>
-            <button @click="setHashTag">해쉬태그</button>
             <form class="form-floating mb-3">
               <input
                 type="name"
@@ -116,7 +112,6 @@ onMounted(() => {});
                 required
               />
               <label for="playlistName">playlist name</label>
-
               <div class="form-floating">
                 <textarea
                   class="form-control"
