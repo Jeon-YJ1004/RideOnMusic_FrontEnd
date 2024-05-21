@@ -14,12 +14,14 @@ let map = null;
 const loadScript = () => {
   const script = document.createElement("script");
   /* global kakao */
+  console.log(123);
   script.onload = () => kakao.maps.load(initMap);
   script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${appKey}&libraries=services,clusterer,drawing`;
   document.head.appendChild(script);
 };
 
 const initMap = () => {
+  console.log(456);
   const container = document.getElementById("map");
   const options = {
     center: new kakao.maps.LatLng(36.35559977190671, 127.29859991863871),

@@ -53,7 +53,7 @@ onMounted(() => {
         <div class="container-fluid navbar-custom">
           <!-- 로고 중앙에 배치 -->
           <div class="navbar-brand-center">
-            <router-link :to="{ name: 'home' }" class="navbar-brand fw-bold" style="padding-bottom: 0; padding-top: 20px">EnjoyTrip</router-link>
+            <router-link :to="{ name: 'home' }" class="navbar-brand fw-bold" style="padding-bottom: 0; padding-top: 20px">EE</router-link>
           </div>
           <!-- 토글 버튼 -->
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
