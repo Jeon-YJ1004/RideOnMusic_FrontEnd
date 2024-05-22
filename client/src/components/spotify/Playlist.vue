@@ -6,21 +6,17 @@ import TrackItem from "@/components/spotify/item/PlaylistTrackItem.vue";
 import store from "@/stores";
 const trackStore = store.useTrackStore();
 const playlistStore = store.usePlaylistStore();
-const {savedTracks}=storeToRefs(trackStore)
+const { savedTracks } = storeToRefs(trackStore);
 // const props = defineProps(["tracks"]);
 // const tracksUris = computed(() => {
 //   return props.tracks ? props.tracks.map((el) => el.uri) : [];
 // });
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 
 <template>
-  <div
-    id="play-list-container"
-    class="play-list-container d-flex flex-column" 
-  >        
-    <div class="card" >
+  <div id="play-list-container" class="play-list-container d-flex flex-column">
+    <div class="">
       <draggable
         class="dragArea list-group"
         :list="savedTracks"
@@ -28,18 +24,11 @@ onMounted(() => {
         item-key="id"
       >
         <template #item="{ element }">
-          <div class="list-group-item">
-            <TrackItem
-                    :key="element.id"
-                    :track="element"
-                    searchEl="true"
-                  />
-          </div>
+          <TrackItem :key="element.id" :track="element" searchEl="true" />
         </template>
-      </draggable>          
+      </draggable>
     </div>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -33,30 +33,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    id="plan-list-sidebar-container"
-    class="map-btn d-none d-lg-flex"
-    style="top: 0px; z-index: 99999"
-  >
-    <button
+  <div id="playlist-list-sidebar-container" class="map-btn d-none d-lg-flex" style="z-index: 99999">
+    <div
       class="m-4"
       title="spotify sidebar"
       type="button"
       data-bs-toggle="offcanvas"
-      data-bs-target="#sidebar-plan"
-      aria-controls="sidebar-plan"
+      data-bs-target="#sidebar-playlist"
+      aria-controls="sidebar-playlist"
       aria-label="Toggle navigation"
-      style="
-        background-color: white;
-        right: 0px;
-        border: none;
-        border-radius: 100%;
-        aspect-ratio: 1/1;
-        right: 0px;
-      "
     >
       <img src="@/assets/img/spotify.png" width="30px" />
-    </button>
+    </div>
     <draggable
       :group="{ name: 'tracks', put: true, pull: false, removeCloneOnHide: true }"
       :list="removeableList"
@@ -70,12 +58,12 @@ onMounted(() => {
         <div
           class="offcanvas offcanvas-end"
           tabindex="-1"
-          id="sidebar-plan"
-          aria-labelledby="sidebar-planLabel"
+          id="sidebar-playlist"
+          aria-labelledby="sidebar-playlistLabel"
         >
           <div class="offcanvas-header">
             <img src="@/assets/img/road-trip.png" alt="logo" width="50" height="50" />
-            <h5 class="offcanvas-title" id="sidebar-planLabel">우리 노래 들으며 갈까요?</h5>
+            <h5 class="offcanvas-title" id="sidebar-playlistLabel">우리 노래 들으며 갈까요?</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -84,14 +72,14 @@ onMounted(() => {
             ></button>
           </div>
 
-          <div class="offcanvas-body" >
+          <div class="offcanvas-body">
             <template v-if="accessToken">
-              <!-- //TODO - plan에 해당하는 플리가 있을 경우 -->
+              <!-- //TODO - playlist에 해당하는 플리가 있을 경우 -->
               <template v-if="hasPlaylist">
-                <div style="height: 60% ">
+                <div style="height: 60%">
                   <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                     <li class="nav-item dropdown">
-                      <a
+                      <!-- <a
                         class="nav-link dropdown-toggle"
                         href="#"
                         role="button"
@@ -99,7 +87,7 @@ onMounted(() => {
                         aria-expanded="false"
                       >
                         일차
-                      </a>
+                      </a> -->
                       <!-- <ul class="dropdown-menu dropdown-menu-dark">
                         <li><a class="dropdown-item" href="#">Action</a></li>
                         <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -125,7 +113,7 @@ onMounted(() => {
                 </div>
               </template>
               <template v-else>
-                <div style="display: flex; justify-content: center;">
+                <div style="display: flex; justify-content: center">
                   <PlaylistCreateModal />
                 </div>
               </template>
