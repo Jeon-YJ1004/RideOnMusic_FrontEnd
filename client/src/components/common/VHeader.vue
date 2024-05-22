@@ -1,30 +1,30 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter, RouterLink } from "vue-router"
+import { useRoute, useRouter, RouterLink } from "vue-router";
 import { Axios } from "@/util/http-commons";
 const route = useRoute();
 const router = useRouter();
-const http = Axios()
+const http = Axios();
 
 var member = ref({
   memberId: "",
   memberPwd: "",
-})
+});
 
 // 추가 부분
-import { storeToRefs } from "pinia"
-import { useMemberStore } from "@/stores/memberStore.js"
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/stores/memberStore.js";
 
-const memberStore = useMemberStore()
-const { isLogin, isLoginError } = storeToRefs(memberStore)
-const { userLogin, getUserInfo , userLogout } = memberStore
+const memberStore = useMemberStore();
+const { isLogin, isLoginError } = storeToRefs(memberStore);
+const { userLogin, getUserInfo, userLogout } = memberStore;
 
 const logout = async () => {
   userLogout();
-}
+};
 
 const login = async () => {
-  await userLogin(member.value)
+  await userLogin(member.value);
   if (isLogin.value) {
     const token = sessionStorage.getItem("accessToken");
     getUserInfo(token);
@@ -32,7 +32,7 @@ const login = async () => {
   } else {
     alert("일치하는 회원이 없습니다");
   }
-}
+};
 
 onMounted(() => {
   const token = sessionStorage.getItem("accessToken");
@@ -143,21 +143,44 @@ onMounted(() => {
           <!-- 입력 폼 -->
           <div class="modal-body">
             <div class="mb-3">
-              <label for="loginId">아이디 : </label> <input type="text" name="memberId" class="form-control" id="loginId"
-                v-model="member.memberId" required />
+              <label for="loginId">아이디 : </label>
+              <input
+                type="text"
+                name="memberId"
+                class="form-control"
+                id="loginId"
+                v-model="member.memberId"
+                required
+              />
               <div class="invalid-feedback">아이디를 입력해주세요.</div>
             </div>
 
             <div class="mb-3">
-              <label for="loginPwd">비밀번호 : </label> <input type="password" name="memberPwd" class="form-control"
-                id="loginPwd" v-model="member.memberPwd" required />
+              <label for="loginPwd">비밀번호 : </label>
+              <input
+                type="password"
+                name="memberPwd"
+                class="form-control"
+                id="loginPwd"
+                v-model="member.memberPwd"
+                required
+              />
               <div class="invalid-feedback">비밀번호를 입력해주세요.</div>
             </div>
 
             <div class="modal-footer mt-3">
               <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-outline-success me-2" @click="login" data-bs-dismiss="modal">로그인</button>
-                <button class="btn btn-outline-success" onclick="location.href='/member/updatePwd'">비밀번호 변경</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-success me-2"
+                  @click="login"
+                  data-bs-dismiss="modal"
+                >
+                  로그인
+                </button>
+                <button class="btn btn-outline-success" onclick="location.href='/member/updatePwd'">
+                  비밀번호 변경
+                </button>
               </div>
             </div>
           </div>
@@ -169,5 +192,5 @@ onMounted(() => {
 </template>
 
 <style scoped>
-@import "/src/assets/css/common.css"
+@import "/src/assets/css/common.css";
 </style>
