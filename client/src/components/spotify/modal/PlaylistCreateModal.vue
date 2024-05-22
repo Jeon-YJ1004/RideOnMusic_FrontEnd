@@ -14,31 +14,6 @@ const clearForm = () => {
   name.value = "";
   description.value = "";
 };
-const selected = ref({ genre: "", travelPurpose: "", artists: "", era: "" });
-const selects = ["genre", "travelPurpose", "era"];
-const options = ref([
-  [
-    { text: "팝", value: "pop" },
-    { text: "록", value: "rock" },
-    { text: "힙합", value: "hip-hop" },
-    { text: "클래식", value: "classical" },
-    { text: "재즈", value: "jazz" },
-    { text: "인디", value: "indie" },
-  ],
-  [
-    { text: "휴양", value: "leisure" },
-    { text: "관광", value: "sightseeing" },
-    { text: "업무", value: "work" },
-    { text: "액티비티", value: "activities" },
-  ],
-  [
-    { text: "1980년대", value: "1980" },
-    { text: " 2000년대 이전", value: "pre-2000s" },
-    { text: "2000년 초", value: "early 2000s" },
-    { text: "2020년대", value: "2020s" },
-  ],
-]);
-
 // const validate = () => {
 //   let valid = true;
 //   if (!name.value) {
@@ -53,7 +28,7 @@ const options = ref([
 // };
 const create = async () => {
   // if (validate()) {
-  try {
+    try {
     await playlistStore.createPlaylist(name.value, description.value, selected.value);
     await playlistStore.setHashTag(selected.value);
     await playlistStore.getPlaylist();
@@ -74,7 +49,7 @@ onMounted(() => {});
       class="btn btn-outline-primary bg-light"
       data-bs-toggle="modal"
       data-bs-target="#creatPLModal"
-      style="width: auto"
+      style="width:auto"
     >
       기깔난 플리 만들기
     </button>
@@ -83,11 +58,9 @@ onMounted(() => {});
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-dark">
           <div class="modal-body">
-            <span class="nav-link active" aria-current="page" href="#"
-              >노래 추천이 필요하다면 해쉬 태그를 설정해 주세요</span
-            >
+            <a class="nav-link active" aria-current="page" href="#">노래 추천이 필요하다면 해쉬 태그를 설정해 주세요</a>
             <div class="col">
-              <!-- {{ selected }} -->
+              {{ selected }}
               <select
                 class="form-select form-select-sm"
                 aria-label=".form-select-sm "

@@ -1,22 +1,22 @@
 <script setup>
-import { ref, onMounted } from "vue";
-const props = defineProps({
+import { ref, onMounted } from "vue"
+const props = defineProps({ 
   selectOption: Array,
   defaultValue: String,
-  classGroup: String,
-});
-const emit = defineEmits(["onKeySelect"]);
+  classGroup: String
+})
+const emit = defineEmits(["onKeySelect"])
 
-const key = ref("");
+const key = ref("")
 
-onMounted(() => {
+onMounted(()=> {
   // console.log(props.selectOption)
-});
+})
 
 const onSelect = () => {
   // console.log(key.value + "선택!!!")
-  emit("onKeySelect", key.value);
-};
+  emit("onKeySelect", key.value)
+}
 </script>
 
 <template>

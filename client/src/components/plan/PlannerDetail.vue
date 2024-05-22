@@ -202,8 +202,12 @@ const saveMemo = (planNo, contentId) => {
     }
 
     getPlanMemo(memo, ({data}) => {
-        alert("성공");
-        window.location.reload();
+        alert("메모가 등록되었습니다");
+        const tripIndex = planner.value.trips.findIndex(trip => trip.contentId === contentId);
+        if (tripIndex !== -1) {
+          // Vue 반응성을 활용하여 값 업데이트
+          planner.value.trips[tripIndex].memoText = memoInput;
+        }
         }, (error) => console.log(error))
 
 };

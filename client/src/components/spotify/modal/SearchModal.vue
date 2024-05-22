@@ -134,6 +134,6 @@ onMounted(() => {});
   text-align: center;
   margin: 0 auto 10px auto;
   background: #eceef0;
-  border-radius: 13px;
+  border-radius: 10px;
 }
 </style>

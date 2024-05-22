@@ -19,17 +19,26 @@ const computedTrack = computed(() => {
   <div id="result-item-container" class="w-100">
     <div class="row align-itmes-center">
       <div class="col-8">
-        <div class="textClass">
-          <h5>{{ track.title }}</h5>
+        <div>
+          <h5>{{ searchEl ? computedTrack.title : computedTrack.name }}</h5>
         </div>
-        <div class="pl-2 pr-1 textClass" style="text-align: left">
+        <div class="pl-2 pr-1" style="text-align: left">
+          <!-- <span
+          class="pr-1 fs-6 row"
+          v-for="(artist, index) in track.track.artists.slice(0, 2)"
+          :key="artist.id"
+        > -->
           <span>
-            {{ track.artist }}
+            {{ searchEl ? computedTrack.artist : computedTrack.artists[0].name }}
+            <!-- <template v-if="index !== track.track.artists.length - 1"> ,&nbsp; </template> -->
           </span>
         </div>
       </div>
       <div class="col-4 p-0 m-0 pr-2 right-0">
-        <img class="rounded img-fluid width-100" :src="track.albumUrl" />
+        <img
+          class="rounded img-fluid width-100"
+          :src="searchEl ? computedTrack.albumUrl : computedTrack.album.images[2].url"
+        />
       </div>
     </div>
   </div>
@@ -121,8 +130,7 @@ const computedTrack = computed(() => {
   width: 100%;
   padding: 0px;
 }
-
-.textClass {
+:deep(span, h5) {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
