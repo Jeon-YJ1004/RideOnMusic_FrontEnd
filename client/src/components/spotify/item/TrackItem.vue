@@ -15,26 +15,37 @@ const computedTrack = computed(() => {
 });
 </script>
 
-<template>
-  <div id="result-item-container" class="w-100">
-    <div class="row align-itmes-center">
-      <div class="col-8">
-        <div class="textClass">
-          <h5>{{ track.title }}</h5>
-        </div>
-        <div class="pl-2 pr-1 textClass" style="text-align: left">
-          <span>
-            {{ track.artist }}
-          </span>
-        </div>
-      </div>
-      <div class="col-4 p-0 m-0 pr-2 right-0">
-        <img class="rounded img-fluid width-100" :src="track.albumUrl" />
-      </div>
+<template class>
+  <div class="d-flex align-items-center result" style="cursor: pointer; height: 150px">
+    <img :src="track.albumUrl" style="height: 100px; width: 100px" class="col" />
+    <div class="ml-3 col-8 textClass">
+      <div>{{ track.title }}</div>
+      <div class="text-muted textClass">{{ track.artist }}</div>
     </div>
+    <TrackAddition @add-track="addTrack" class="col" />
   </div>
 </template>
 
+<style scoped>
+.result {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  font-weight: 300;
+  width: 400px;
+  padding: 10px;
+  text-align: center;
+  margin: 0 auto 10px auto;
+  background: #eceef0;
+  border-radius: 143x;
+}
+.textClass {
+  /* display: -webkit-box; */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+</style>
 <style scoped lang="scss">
 #result-item-container {
   height: 90px;
@@ -121,8 +132,7 @@ const computedTrack = computed(() => {
   width: 100%;
   padding: 0px;
 }
-
-.textClass {
+:deep(span, h5) {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;

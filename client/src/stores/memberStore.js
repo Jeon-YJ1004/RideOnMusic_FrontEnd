@@ -127,6 +127,7 @@ export const useMemberStore = defineStore(
             sessionStorage.removeItem("accessToken");
             sessionStorage.removeItem("refreshToken");
 
+            localStorage.removeItem("memberStore");
             localStorage.removeItem("token");
             localStorage.removeItem("playlist");
             localStorage.removeItem("track");

@@ -3,16 +3,7 @@ import { watch } from "vue";
 import store from "@/stores";
 import { storeToRefs } from "pinia";
 const emit = defineEmits(["add-track"]);
-const props = defineProps({
-  trackID: {
-    type: String,
-    required: true,
-  },
-  uri: {
-    type: String,
-    default: "",
-  },
-});
+
 const addTracke = () => {
   emit("add-track");
 };
