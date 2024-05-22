@@ -100,6 +100,14 @@ const getContentType = (id) => {
   }
 };
 
+const setMarker = (lat, lng) => {
+  let attrItem;
+  if (props.type == "search") attrItem = attr.value;
+  else attrItem = attr.value.attractionDto;
+
+  emit("set-marker", { lat, lng, attr: attrItem });
+};
+
 const onDelete = () => {
   const params = {
     order: attr.value.order,
@@ -107,9 +115,46 @@ const onDelete = () => {
   };
   emit("on-delete", params);
 };
-</script>
 
+const favorAttr = () => {
+  const params = {
+    contentId: attr.value.contentId,
+  };
+  postWish(params, () => {
+    favored.value = true;
+  });
+};
+
+const unfavorAttr = () => {
+  deleteWish(attr.value.contentId, () => {
+    favored.value = false;
+  });
+};
+
+onMounted(() => {
+  checkWish(attr.value.contentId, (res) => {
+    favored.value = res.data > 0;
+  });
+});
+</script>
 <style scoped lang="scss">
+.heart:hover {
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  transform: scale(1.3);
+}
+
+.heart {
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+
 #result-item-container {
   padding: 15px;
   border: 1px solid rgba(33, 33, 53, 0.125);

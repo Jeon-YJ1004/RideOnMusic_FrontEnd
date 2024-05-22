@@ -6,7 +6,7 @@
     <div v-if="loaded">
       <b-card no-body>
         <b-tabs v-model="tabIndex" card ref="tabmenu">
-          <draggable :animation="500" @change="onChange" v-model="curCourse">
+          <draggable :animation="500" @change="onChange" v-model="course">
             <transition-group>
               <SpotListItem
                 v-for="attr in dayCourse"
@@ -29,60 +29,49 @@
 
 <template>
   <div id="area_sel">
-    <!-- <draggable :animation="500" @change="onChange" v-model="curCourse[index]">
-      <transition-group>
-        <attr-search-result-item
-          v-for="attr in dayCourse"
-          :key="attr.order"
-          :attr-prop="attr"
-          :type="'plan'"
-          @on-delete="onDelete"
-          @set-marker="setMarker"
-        />
-      </transition-group>
-    </draggable> -->
-    <SpotListItem
-      v-for="attr in curCourse"
-      :key="attr.order"
-      :attr-prop="attr"
-      :type="'plan'"
-      @on-delete="onDelete"
-      @set-marker="setMarker"
-    />
+    <VueDraggableNext
+      v-if="course && course.length > 0"
+      v-model="course"
+      :options="{ handle: '.drag-handle' }"
+      @end="OnPathUpdate"
+    >
+      <div v-for="(place, idx) in course" :key="place.addr" class="drag-handle draggable">
+        <img :src="place.img" style="width: 50px; height: 50px" />
+        <div>
+          [{{ place.title }}]<br />
+          지번 주소: {{ place.addr }}
+        </div>
+        <button @click="onDelete(idx)">삭제</button>
+      </div>
+    </VueDraggableNext>
     <div v-else>추가된 항목이 없습니다.</div>
   </div>
 </template>
 
-<script>
-import { ref, reactive, onMounted, getCurrentInstance } from "vue";
+<script setup>
+import { ref, reactive, onMounted, getCurrentInstance, computed, defineExpose } from "vue";
 import draggable from "vuedraggable";
 import SpotListItem from "@/components/plan/item/SpotListItem.vue";
-import SpotListItem from "@/components/plan/item/SpotListItem.vue";
+import { VueDraggableNext } from "vue-draggable-next";
+import { storeToRefs } from "pinia";
+import store from "@/stores";
+import { useMemberStore } from "@/stores/memberStore.js";
+import { Axios } from "@/util/http-commons.js";
+import { chatService, socket, handleSocketMessage } from "@/services/ChatService.js";
 
-const props = defineProps({
-  type: {
-    type: String,
-    default: "plan",
-  },
-  courses: {
-    type: Array,
-  },
-  maxDay: {
-    type: Number,
-    default: 0,
-  },
-});
+const http = Axios();
+const playlistStore = store.usePlaylistStore();
+const appKey = import.meta.env.VITE_KAKAO_APPKEY;
+const apiurl = ref(import.meta.env.VITE_API_URL); //import 방식으로 고치기
 
-const emit = defineEmits([
-  "chat-req-change-tab",
-  "req-scroll-search",
-  "set-marker",
-  "on-update-path",
-  "on-update-courses",
-  "set-init-map",
-]);
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 
-const curCourse = ref([]);
+const props = defineProps(["addedPlaces", "form", "init-form"]);
+
+const emit = defineEmits(["req-scroll-search", "on-update-courses", "on-update-path"]);
+
+const course = ref([]);
 const loaded = ref(false);
 const resultList = ref([]);
 
@@ -92,140 +81,129 @@ const resetList = () => {
   resultList.value = [];
 };
 
-const onDelete = (orderAndDay) => {
-  curCourse.value[orderAndDay.day - 1].splice(orderAndDay.order - 1, 1);
-  resetOrders();
+const onDelete = (index) => {
+  course.value.splice(index, 1); //인덱스로부터 1개 제거
+  // resetOrders();
   onUpdatePath();
 };
 
-const fetchPath = (course) => {
-  curCourse.value = course.course;
-  resetOrders();
-};
+// const fetchPath = (course) => {
+//   course.value = course.course;
+//   resetOrders();
+// };
 
-const addPath = (info) => {
-  const newObj = {
-    contentId: info.contentId,
-    planId: proxy.$route.params.planid,
-    order: 99999,
-    attractionDto: info,
-  };
-  curCourse.value = curCourse.value.concat(newObj);
-  resetOrders();
-  onUpdatePath();
+const addPath = (position) => {
+  course.value = course.value.concat(position);
+  // resetOrders();
+  // onUpdatePath();
 };
 
 const onNewResult = (result) => {
   resultList.value = result;
 };
-
 const onAddResult = (result) => {
   resultList.value = resultList.value.concat(result);
 };
 
-const onChange = () => {
-  resetOrders();
-  onUpdatePath(tabIndex);
+const OnPathUpdate = () => {
+  // resetOrders();
+  onUpdatePath();
 };
 
-const resetOrders = () => {
-  for (let i = 0; i < curCourse.length; i++) {
-    for (let j = 0; j < curCourse[i].length; j++) {
-      curCourse[i][j].order = j + 1;
-    }
+// const resetOrders = () => {
+//   for (let i = 0; i < course.value.length; i++) {
+//     course.value[i].order = i + 1;
+//   }
+// };
+
+//서버에 등록 요청
+const handleFormSubmit = async () => {
+  if (!course.value) {
+    alert("추가된 장소가 없습니다.");
+    return;
+  }
+  const formData = new FormData();
+  formData.append("planTitle", props.form.value.planTitle);
+  formData.append("startDate", props.form.value.startDate);
+  formData.append("endDate", props.form.value.endDate);
+  formData.append("transport", props.form.value.transport);
+  formData.append("memberId", userInfo.value.memberId);
+  const contentIds = course.value.map((place) => place.contentId);
+  formData.append("selectedPlaces", contentIds);
+  if (playlistStore.hasPlaylist) {
+    console.log(playlistStore.planPlaylistId);
+    formData.append("playlistId", playlistStore.planPlaylistId);
+  }
+  if (props.form.value.thumbnail) {
+    formData.append("file", props.form.value.thumbnail);
+  }
+  displayFormData(formData);
+  try {
+    const response = await http.post(apiurl.value + "plan", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    emit("init-form");
+    socket.send(
+      JSON.stringify({
+        type: "plan",
+      })
+    );
+  } catch (error) {
+    console.error("Error submitting form:", error);
+  }
+};
+//디버깅
+const displayFormData = (formData) => {
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value}`);
   }
 };
 
-const saveCourse = (title, start, end) => {
-  const planid = proxy.$route.params.planid;
-  const params = {
-    title: title,
-    startDate: start,
-    endDate: end,
-    planId: Number(planid),
-    courses: getCourseObject(),
-  };
-
-  modifyPlan(
-    params,
-    () => {
-      alert("저장했습니다.");
-    },
-    () => {}
-  );
-  onUpdatePath(tabIndex);
-};
-
-const getCourseObject = () => {
-  const courses = [];
-  for (let i = 0; i < curCourse.value.length; i++) {
-    for (let j = 0; j < curCourse.value[i].length; j++) {
-      const obj = {
-        contentId: curCours.valuee[i][j].contentId,
-        order: j + 1,
-        day: i + 1,
-      };
-      courses.push(obj);
-    }
-  }
-  return courses;
-};
+// const getCourseObject = () => {
+//   const courses = [];
+//   for (let i = 0; i < course.value.length; i++) {
+//     const obj = {
+//       contentId: course.value[i].contentId,
+//       order: i+ 1,
+//       };
+//       courses.push(obj);
+//   }
+//   return courses;
+// };
 
 const onAddDay = () => {
-  curCourse.value.push([]);
+  course.value.push([]);
 };
 
 const setMarker = (LatLngAndInfo) => {
   emit("set-marker", LatLngAndInfo);
 };
 
-const onUpdatePath = (idx = 0, send = true) => {
-  const params = {
-    course: curCourse,
-    send: send,
-    idx: Number(idx),
-  };
-  emit("on-update-path", params);
+//  sendPathUpdate to socket
+const onUpdatePath = () => {
+  console.log("course");
+  console.log(course.value);
+  socket.send(
+    JSON.stringify({
+      type: "path",
+      contents: course.value,
+    })
+  );
+  emit("on-update-path", course.value);
 };
 
-const planid = proxy.$route.params.planid;
-if (planid != undefined) {
-  getPlanInfo(
-    planid,
-    (res) => {
-      const plan = res.data;
+// const editCourses = computed({
+//   get() {
+//     return props.courses;
+//   },
+//   set(v) {
+//     emit("on-update-courses", v);
+//   },
+// });
 
-      const initMapLatLngList = [];
-      for (let i = 0; i < plan.courses.length; i++) {
-        const order = plan.courses[i].order - 1;
-        const day = plan.courses[i].day - 1;
-        if (curCourse[day] == undefined) curCourse[day] = new Array();
-        curCourse[day][order] = plan.courses[i];
-        if (day == 0) {
-          initMapLatLngList.push({
-            lat: plan.courses[i].attractionDto.latitude,
-            lng: plan.courses[i].attractionDto.longitude,
-          });
-        }
-      }
-      if (plan.courses.length == 0) onAddDay();
-      loaded = true;
-      onUpdatePath(tabIndex, false);
-
-      emit("set-init-map", initMapLatLngList);
-    },
-    () => {}
-  );
-}
-
-const editCourses = computed({
-  get() {
-    return props.courses;
-  },
-  set(v) {
-    emit("on-update-courses", v);
-  },
-});
+defineExpose({ addPath });
 </script>
 
 <style scoped>
