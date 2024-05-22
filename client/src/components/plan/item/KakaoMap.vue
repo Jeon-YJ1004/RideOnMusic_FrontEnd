@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUpdated, ref, watch } from "vue";
+import { onMounted, onUpdated, ref, watch,defineExpose } from "vue";
 import { Axios } from "@/util/http-commons.js";
 import { useRouter } from "vue-router";
 import { chatService, socket, handleSocketMessage, addedPlaces } from "@/services/ChatService.js";
@@ -15,7 +15,7 @@ const props = defineProps({
   keyword: String,
   places: Object,
 });
-const emit = defineEmits(["add-place"]);
+const emit = defineEmits(["add-path"]);
 const playlistStore = store.usePlaylistStore();
 
 const http = Axios();
@@ -92,9 +92,9 @@ const initMap = () => {
   map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
 };
 
-function setMarkers(places) {
+const setMarkers=(places)=> {
   var bounds = new kakao.maps.LatLngBounds();
-  removeMarker();
+  resetMarkers();
   removeDraw();
   for (var i = 0; i < places.length; i++) {
     var placePosition = new kakao.maps.LatLng(places[i].latitude, places[i].longitude);
@@ -137,7 +137,7 @@ function setMarkers(places) {
   map.setBounds(bounds);
 }
 
-function addMarker(position) {
+const addMarker=(position)=> {
   var imageSrc = markerImg,
     imageSize = new kakao.maps.Size(80, 80),
     imgOptions = {
@@ -167,7 +167,9 @@ function addMarker(position) {
 }
 
 // 장소 추가 함수
-function addPlace(position) {
+const addPlace=(position)=> {
+    console.log("position")
+    console.log(position);
   if (duplicateCheck(position)) {
     addedPlaces.value.push({
       contentId: position.contentId,
@@ -178,8 +180,17 @@ function addPlace(position) {
       latitude: position.latlng.La,
       longitude: position.latlng.Ma,
     });
+
     updateMap();
-    emit("add-path", position);
+    emit("add-path", {
+      contentId: position.contentId,
+      idx: position.idx,
+      title: position.title,
+      addr: position.addr,
+      img: position.img,
+      latitude: position.latlng.La,
+      longitude: position.latlng.Ma,
+    });
   }
   sendPathUpdate();
 }
@@ -194,12 +205,14 @@ const sendPathUpdate = () => {
 };
 
 // 중복 검사 함수
-function duplicateCheck(position) {
+const duplicateCheck=(position)=> {
   return !addedPlaces.value.some((place) => place.contentId === position.contentId);
 }
 
 // 지도 업데이트 함수
-function updateMap() {
+const updateMap=() =>{
+    console.log("addedPlaces")
+    console.log(addedPlaces.value);
   if (addedPlaces.value.length >= 2) {
     drawLine();
   } else {
@@ -208,36 +221,37 @@ function updateMap() {
 }
 
 // 장소 제거 함수
-function removePlace(idx) {
-  const index = addedPlaces.value.findIndex((p) => p.idx === idx);
-  if (index !== -1) {
-    addedPlaces.value.splice(index, 1); //인덱스로부터 1개 제거
-    updateMap();
-  }
-  socket.send(
-    JSON.stringify({
-      type: "path",
-      contents: addedPlaces.value,
-    })
-  );
-}
+// const removePath=(idx)=> {
+//   const index = addedPlaces.value.findIndex((p) => p.idx === idx);
+//   if (index !== -1) {
+//     addedPlaces.value.splice(index, 1); //인덱스로부터 1개 제거
+//     updateMap();
+//   }
+//   socket.send(
+//     JSON.stringify({
+//       type: "path",
+//       contents: addedPlaces.value,
+//     })
+//   );
+// }
 
 // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
-function makeOverListener(map, marker, infowindow) {
+const makeOverListener=(map, marker, infowindow)=> {
   return function () {
     infowindow.open(map, marker);
   };
 }
 
 // 인포윈도우를 닫는 클로저를 호출
-function makeOutListener(infowindow) {
+const makeOutListener=(infowindow)=> {
+
   return function () {
     infowindow.close();
   };
 }
 
 // 지도 위에 표시되고 있는 마커,오버레이 모두 제거
-function removeMarker() {
+const resetMarkers=()=> {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
   }
@@ -251,7 +265,7 @@ function removeMarker() {
   addedPlaces.value = [];
 }
 
-function drawLine() {
+const drawLine=()=> {
   var linePath = addedPlaces.value.map((place) => {
     return new kakao.maps.LatLng(place.longitude, place.latitude);
   });
@@ -267,16 +281,18 @@ function drawLine() {
 
   polyline.setMap(map);
 }
-function setMarker(LatLngAndInfo) {
+const setMarker=(LatLngAndInfo)=> {
   kakaomap.value.setMarker(LatLngAndInfo);
 }
 
 // 모든 선을 지도에서 제거
-function removeDraw() {
+const removeDraw=() =>{
   if (polyline) {
     polyline.setMap(null);
   }
 }
+
+defineExpose({initMap, setMarker,setMarkers,resetMarkers, addPlace})
 </script>
 
 <template>
@@ -288,7 +304,7 @@ function removeDraw() {
   background-color: aqua;
 }
 
-. .wrap * {
+.wrap * {
   padding: 0;
   margin: 0;
 }

@@ -6,7 +6,6 @@ import VHeader from "./components/common/VHeader.vue";
 <template>
   <div>
     <VHeader />
-
     <div>
       <RouterView />
     </div>
