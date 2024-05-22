@@ -3,9 +3,13 @@ import { ref, reactive, onMounted, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import store from "@/stores";
 // import playlists from "@/api/spotify/playlists";
+
+const { VITE_NODE_EXPRESS_URI } = import.meta.env;
 const name = ref("");
 const description = ref("");
 const playlistStore = store.usePlaylistStore();
+const tokenStore = store.useTokenStore();
+
 const clearForm = () => {
   name.value = "";
   description.value = "";
@@ -22,14 +26,12 @@ const clearForm = () => {
 //   }
 //   return valid;
 // };
-const makePlaylist = () => {
-  //TODO - spotify랑 연결
-  //TODO - back서버와 연결해서 plan의 playlist id 저장
-};
 const create = async () => {
   // if (validate()) {
-  try {
-    const response = await playlistStore.createPlaylist(name.value, description.value);
+    try {
+    await playlistStore.createPlaylist(name.value, description.value, selected.value);
+    await playlistStore.setHashTag(selected.value);
+    await playlistStore.getPlaylist();
     clearForm();
   } catch (e) {
     console.log(e);
@@ -47,6 +49,7 @@ onMounted(() => {});
       class="btn btn-outline-primary bg-light"
       data-bs-toggle="modal"
       data-bs-target="#creatPLModal"
+      style="width:auto"
     >
       기깔난 플리 만들기
     </button>
@@ -55,8 +58,21 @@ onMounted(() => {});
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-dark">
           <div class="modal-body">
-            <a class="nav-link active" aria-current="page" href="#">해쉬태그 정하기</a>
-
+            <a class="nav-link active" aria-current="page" href="#">노래 추천이 필요하다면 해쉬 태그를 설정해 주세요</a>
+            <div class="col">
+              {{ selected }}
+              <select
+                class="form-select form-select-sm"
+                aria-label=".form-select-sm "
+                v-for="(select, index) in selects"
+                v-model="selected[select]"
+                :key="select"
+              >
+                <option v-for="option in options[index]" :value="option.value" :key="option.value">
+                  {{ option.text }}
+                </option>
+              </select>
+            </div>
             <form class="form-floating mb-3">
               <input
                 type="name"
@@ -67,7 +83,6 @@ onMounted(() => {});
                 required
               />
               <label for="playlistName">playlist name</label>
-
               <div class="form-floating">
                 <textarea
                   class="form-control"

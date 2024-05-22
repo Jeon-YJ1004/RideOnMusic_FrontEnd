@@ -15,8 +15,10 @@ export const usePlaylistStore = defineStore(
     const hasPlaylist = ref(false);
     const planPlaylistId = ref(null);
 
-    const createPlaylist = async (name, desc) => {
-      axios
+    const createPlaylist = async (name, desc, hashtags) => {
+      console.log(planPlaylistId.value);
+      if (planPlaylistId.value) return;
+      return axios
         .post(`${VITE_NODE_EXPRESS_URI}/spotify/createPlaylist`, {
           accessToken: tokenStore.accessToken,
           name: name,
@@ -38,17 +40,36 @@ export const usePlaylistStore = defineStore(
           // console.log(res.data);
           // router.push("/");
         })
+        // .then((data) => {
+        //   console.log("set hashtag");
+        //   setHashTag(hashtags);
+        // })
+        // .then((data) => getPlaylist())
         .catch((error) => {
           // router.push("/");
           console.log(error);
         });
     };
+    const setHashTag = (hashtags) => {
+      console.log("set hashtag " + planPlaylistId.value);
+      return axios.post(`${VITE_NODE_EXPRESS_URI}/chatgpt/setHashTag`, {
+        hashtags: hashtags,
+        userInfo: { gender: "male", age: 20 },
+        playlistId: planPlaylistId.value,
+        accessToken: tokenStore.accessToken,
+      }).then((res) => {
+        console.log(res.data);
+      });
+    };
 
     const getPlaylist = async () => {
+      if (!planPlaylistId.value) {
+        console.log("planPlaylistId is null");
+        return;
+      }
       axios
         .post(`${VITE_NODE_EXPRESS_URI}/spotify/getPlaylist`, {
           accessToken: tokenStore.accessToken,
-          // playlistId: "3cEYpjA9oz9GiPac4AsH4n",
           playlistId: planPlaylistId.value,
         })
         .then((res) => {
@@ -144,6 +165,7 @@ export const usePlaylistStore = defineStore(
       addtracks,
       removetracks,
       savePlaylist,
+      setHashTag,
     };
   },
   {

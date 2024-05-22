@@ -41,7 +41,32 @@ export const useSearchStore = defineStore(
           console.log(error);
         });
     };
-
+    const searchRecommendTrack = async (artist, song) => {
+      axios
+        .post(`${VITE_NODE_EXPRESS_URI}/spotify/searchRecommendTrack`, {
+          accessToken: tokenStore.accessToken,
+          artist: artist,
+          song: song,
+        })
+        .then((res) => {
+          // console.log(res.data);
+          searchResults.value = res.data.tracks.items.map((track) => ({
+            artist: track.artists[0].name,
+            title: track.name,
+            id: track.id,
+            uri: track.uri,
+            albumUrl: track.album.images.reduce((smallest, image) => {
+              if (image.height < smallest.height) return image;
+              return smallest;
+            }, track.album.images[0]).url,
+          }));
+          // nextPageUrl.value = response.body.tracks.next;
+          // console.log(res.data)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
     return {
       searchQuery,
       searchResults,
