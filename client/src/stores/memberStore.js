@@ -132,6 +132,7 @@ export const useMemberStore = defineStore(
             localStorage.removeItem("playlist");
             localStorage.removeItem("track");
             localStorage.removeItem("user");
+            localStorage.removeItem("memberStore");
           } else {
             console.error("유저 정보 없음!!!!");
           }

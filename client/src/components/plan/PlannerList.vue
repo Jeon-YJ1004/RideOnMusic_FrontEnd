@@ -2,24 +2,27 @@
 import "@/assets/css/board.css";
 import "@/assets/css/plan_list.css";
 import { ref, onMounted, watch } from "vue";
-import { Axios } from '@/util/http-commons.js';
 import PlannerListItem from "@/components/plan/item/PlannerListItem.vue";
+import { useMemberStore } from "@/stores/memberStore.js";
+import { storeToRefs } from "pinia"
+import { getPlannerList } from "@/api/plan.js";
 
+// 추가 코드
+const memberStore = useMemberStore();
+const { userInfo} = storeToRefs(memberStore);
+//
 
-const http = Axios();
 const loaded = ref(false);
 const planners = ref([]);
 
 onMounted(() => {
-    getPlannerList();
+    PlannerList();
 })
 
-const getPlannerList = async () => {
-    http.get("/plan/list")
-        .then((response) => {
-            planners.value = response.data.data;
-        })
-        .catch()
+const PlannerList = async () => {
+    getPlannerList(userInfo.value.memberId, ({data}) => {
+        planners.value = data.data;
+    }, (error) => console.log(error));
 }
 
 watch(planners, (newValue, oldValue) => {
@@ -31,11 +34,20 @@ watch(planners, (newValue, oldValue) => {
 </script>
 
 <template>
-    <div>
-        <div v-if="loaded">
+        <!-- <div class="planTitle" id="list-container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10 col-sm-12">
+                        <h2 class="my-3 py-3 shadow-sm bg-light text-center">
+                            <mark class="sky">계획 목록</mark>
+                        </h2>
+                </div>
+            </div>
+        </div> -->
+
+        <div v-if="loaded" stlye="margin">
             <PlannerListItem :planners="planners" />
         </div>
-    </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

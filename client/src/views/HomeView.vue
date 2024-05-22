@@ -1,125 +1,79 @@
-<script setup>
+<script>
+import { defineComponent } from "vue";
+import { Carousel, Pagination, Slide } from "vue3-carousel";
+import home_1 from "@/assets/img/banner1.jpg";
+import home_2 from "@/assets/img/banner2.jpg";
+import home_3 from "@/assets/img/banner3.jpg";
 
+import "vue3-carousel/dist/carousel.css";
+
+export default defineComponent({
+	name: "AutoPlay",
+	components: {
+		Carousel,
+		Slide,
+		Pagination,
+	},
+	data() {
+		return {
+			slides: [home_1, home_2, home_3],
+		};
+	},
+});
 </script>
 
 <template>
-<div>
-    <!--배너 부분 시작-->
-    <div>
-        <div id="cards" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleIndicators"
-                        data-bs-slide-to="0" class="active" aria-current="true"
-                        aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators"
-                        data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators"
-                        data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-                <div class="carousel-item active " data-bs-interval="5000">
-                    <img src="/src/assets/img/bg6.jpg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>First slide label</h5>
-                        <p>Some representative placeholder content for the first
-                            slide.</p>
+    <div class="banner">
+        <!-- 배너 수정중 -->
+        <div class="wrapper">
+            <Carousel :autoplay="3000" :wrap-around="true">
+                <Slide v-for="slide in slides" :key="slide">
+                    <div class="carousel__item">
+                        <img class="slideImg" :src="slide" />
                     </div>
-                </div>
-                <div class="carousel-item" data-bs-interval="5000">
-                    <img src="/src/assets/img/bg4.jpg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>First slide label</h5>
-                        <p>Some representative placeholder content for the first
-                            slide.</p>
-                    </div>
-                </div>
-                <div class="carousel-item" data-bs-interval="5000">
-                    <img src="/src/assets/img/bg3.jpg" class="d-block w-100" alt="...">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>First slide label</h5>
-                        <p>Some representative placeholder content for the first
-                            slide.</p>
-                    </div>
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button"
-                    data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button"
-                    data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    </div>
+                </Slide>
 
-    <!-- 배경 색상과 불투명도를 가진 섹션 -->
-    <div class="background-color-section">
-        <div class="text-center mb-5" style="margin-top: 3cm; margin-bottom: 2cm">
-            <h4>
-                <mark>한국의 아름다운 여행지로 떠나보세요</mark>
-            </h4>
+                <template #addons>
+                    <Pagination class="custom-pagination"/>
+                </template>
+            </Carousel>
         </div>
+        <!-- 수정끝 -->
 
-        <!--배너 부분 끝-->
-        <div class="container mt-5">
+        <!-- 배경 색상과 불투명도를 가진 섹션 -->
+        <div class="background-color-section">
+
+            <!--배너 부분 끝-->
             <div class="container mt-5">
-                <div class="row g-4">
-                    <!-- 이미지 반복 시작 -->
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                <div class="container mt-5">
+                    <div class="row g-4">
+                        <!-- 이미지 반복 시작 -->
+                        <div class="col-3">
+                            <div class="square-image">
+                                <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                            </div>
                         </div>
-                    </div>
-                    <!-- 이미지 9개에 대해 위의 div를 반복 -->
-                    <div class="col-4">
-                        <div class="square-image">                        
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                        <!-- 이미지 9개에 대해 위의 div를 반복 -->
+                        <div class="col-3">
+                            <div class="square-image">                        
+                                <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                        <div class="col-3">
+                            <div class="square-image">
+                                <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                        <div class="col-3">
+                            <div class="square-image">                        
+                                <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
-                        </div>
-                    </div>
 
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
-                        </div>
-                    </div>
 
-                    <div class="col-4">
-                        <div class="square-image">
-                            <img src="/src/assets/img/bg4.jpg" class="img-fluid" alt="Image">
-                        </div>
+                        <!-- 더 많은 이미지 컬럼 추가 -->
                     </div>
-
-                    <!-- 더 많은 이미지 컬럼 추가 -->
                 </div>
-            </div>
 
             <div class="text-center">
                 <button class="btn btn-primary">핫플 이동하기</button>

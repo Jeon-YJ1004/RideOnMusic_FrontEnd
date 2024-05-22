@@ -48,21 +48,15 @@ onMounted(() => {
 <template>
   <div>
     <div id="header">
-      <nav
-        class="navbar navbar-expand-lg navbar-light bg-light shadow fixed-top navbar-custom"
-        style="padding-bottom: 2px; padding-top: 0px"
-      >
-        <div class="container-fluid navbar-custom">
-          <!-- 로고 중앙에 배치 -->
-          <div class="navbar-brand-center">
-            <router-link
-              :to="{ name: 'home' }"
-              class="navbar-brand fw-bold"
-              style="padding-bottom: 0; padding-top: 20px"
-              >EnjoyTrip</router-link
-            >
+      <nav class="navbar navbar-expand-lg navbar-light shadow fixed-top navbar-custom">
+        <div class="container-fluid">
+          <!-- 로고를 왼쪽에 위치시키기 위한 div -->
+          <div class="navbar-brand-left">
+            <router-link :to="{ name: 'home' }" class="navbar-brand fw-bold">
+              <img src="@/assets/img/banner.jpeg" width="200px" />
+            </router-link>
           </div>
-          <!-- 토글 버튼 -->
+
           <button
             class="navbar-toggler"
             type="button"
@@ -74,10 +68,10 @@ onMounted(() => {
           >
             <span class="navbar-toggler-icon"></span>
           </button>
+
           <!-- 네비게이션 링크 컨테이너 -->
-          <div class="navbar-nav-container collapse navbar-collapse" id="navbarContent">
-            <!-- 관광지 관련 링크 -->
-            <ul class="navbar-nav">
+          <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            <ul class="navbar-nav me-auto">
               <li class="nav-item">
                 <router-link :to="{ name: 'trip' }" class="nav-link">지역별관광지</router-link>
               </li>
@@ -91,10 +85,7 @@ onMounted(() => {
                 <router-link :to="{ name: 'qnaboard' }" class="nav-link">큐앤에이</router-link>
               </li>
             </ul>
-
-            <!-- 회원 관련 링크 -->
-            <!-- v-if: 렌더링 유무 / v-show: display 유무 -->
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ms-auto">
               <template v-if="isLogin">
                 <li class="nav-item">
                   <router-link :to="{ name: 'membermypage' }" class="nav-link"
@@ -121,10 +112,14 @@ onMounted(() => {
                 </li>
               </template>
             </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
 
-            <!-- // 코드수정 -->
+    <!-- // 코드수정 -->
 
-            <!-- <template v-for="menu in menuList" :key="menu.routeName">
+    <!-- <template v-for="menu in menuList" :key="menu.routeName">
             <template v-if="menu.show">
               <template v-if="menu.routeName === 'member-logout'">
                 <li class="nav-item">
@@ -142,11 +137,7 @@ onMounted(() => {
               </template>
             </template>
           </template> -->
-            <!-- // 코드수정 -->
-          </div>
-        </div>
-      </nav>
-    </div>
+    <!-- // 코드수정 -->
 
     <!-- 로그인 모달 -->
     <div
