@@ -29,7 +29,7 @@
 
 <template>
   <div id="area_sel">
-    <draggable :animation="500" @change="onChange" v-model="curCourse[index]">
+    <!-- <draggable :animation="500" @change="onChange" v-model="curCourse[index]">
       <transition-group>
         <attr-search-result-item
           v-for="attr in dayCourse"
@@ -40,7 +40,15 @@
           @set-marker="setMarker"
         />
       </transition-group>
-    </draggable>
+    </draggable> -->
+    <SpotListItem
+      v-for="attr in curCourse"
+      :key="attr.order"
+      :attr-prop="attr"
+      :type="'plan'"
+      @on-delete="onDelete"
+      @set-marker="setMarker"
+    />
     <div v-else>추가된 항목이 없습니다.</div>
   </div>
 </template>
@@ -48,6 +56,7 @@
 <script>
 import { ref, reactive, onMounted, getCurrentInstance } from "vue";
 import draggable from "vuedraggable";
+import SpotListItem from "@/components/plan/item/SpotListItem.vue";
 import SpotListItem from "@/components/plan/item/SpotListItem.vue";
 
 const props = defineProps({
