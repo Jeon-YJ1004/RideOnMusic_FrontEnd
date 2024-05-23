@@ -63,7 +63,7 @@ onMounted(() => {
         >
           <div class="offcanvas-header">
             <img src="@/assets/img/road-trip.png" alt="logo" width="50" height="50" />
-            <h5 class="offcanvas-title" id="sidebar-playlistLabel">우리 노래 들으며 갈까요?</h5>
+            <h4 class="offcanvas-title" id="sidebar-playlistLabel">우리 노래 들으며 갈까요?</h4>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -77,29 +77,7 @@ onMounted(() => {
               <!-- //TODO - playlist에 해당하는 플리가 있을 경우 -->
               <template v-if="hasPlaylist">
                 <div style="height: 60%">
-                  <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                    <li class="nav-item dropdown">
-                      <!-- <a
-                        class="nav-link dropdown-toggle"
-                        href="#"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        일차
-                      </a> -->
-                      <!-- <ul class="dropdown-menu dropdown-menu-dark">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li>
-                          <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                      </ul> -->
-                    </li>
-                  </ul>
                   <button @click="playlistStore.getPlaylist()">플리 업뎃</button>
-
                   <SearchModal />
                   <Playlist />
                   <button
