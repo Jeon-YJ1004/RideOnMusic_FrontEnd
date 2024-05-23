@@ -89,7 +89,6 @@ const handleFormSubmit = async () => {
     alert("추가된 장소가 없습니다.");
     return;
   }
-  console.log(console.log(userInfo.value.memberId));
   const formData = new FormData();
   formData.append("planTitle", form.value.planTitle);
   formData.append("startDate", form.value.startDate);
@@ -113,10 +112,12 @@ const handleFormSubmit = async () => {
       },
     });
     form.value = initialForm;
-    router.push({ name: "plannerlist" });
+    console.log(form.value);
+    // router.push({ name: "plannerlist" });
     socket.send(
       JSON.stringify({
         type: "plan",
+        memberId: userInfo.value.memberId,
       })
     );
   } catch (error) {
