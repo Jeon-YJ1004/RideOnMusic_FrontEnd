@@ -19,6 +19,7 @@
         flex-wrap: nowrap;
       "
     >
+      <InviteMemberModal @invite-member="inviteMember" />
       <SpotListSidebar class="" :places="places" ref="spotlistSidebar" />
       <div class="text-center" style="height: 40px; margin-left: 30px">
         <VSelect
@@ -59,25 +60,6 @@
     </div>
     <!-- kakao map -->
     <KakaoMap :places="places" ref="kakaomap" />
-
-    <div class="col-md-3 mb-3 text-center d-flex col">
-      <input
-        id="sendedPushMember"
-        class="form-control mr-2"
-        type="text"
-        v-model="sendedPushMember"
-        placeholder="초대할 멤버 ID 입력"
-        aria-label="초대할 멤버 ID 입력"
-      />
-      <button
-        class="btn btn-primary btn-sm"
-        id="btn-invite"
-        style="white-space: nowrap; margin-left: 5%"
-        @click="inviteMember"
-      >
-        초대하기
-      </button>
-    </div>
   </div>
 </template>
 
@@ -100,22 +82,20 @@ import KakaoMap from "@/components/plan/item/KakaoMap.vue";
 import VSelect from "@/components/common/VSelect.vue";
 import MusicSidebar from "@/components/spotify/MusicSidebar.vue";
 import store from "@/stores";
+import InviteMemberModal from "@/components/plan/InviteMemberModal.vue";
 
 import SpotListSidebar from "@/components/plan/SpotListSidebar.vue";
 
 const route = useRoute();
 const http = Axios();
 
-// 초대 수정 코드
-const sendedPushMember = ref("");
-
-// 끝
 const kakaomap = ref(null);
 const spotlistSidebar = ref(null);
 
 const memberStore = store.useMemberStore();
 
-function inviteMember() {
+// 초대 수정 코드
+function inviteMember(sendedPushMember) {
   const memberId = sessionStorage.getItem("memberId");
   socket.send(
     JSON.stringify({

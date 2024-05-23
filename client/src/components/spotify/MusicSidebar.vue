@@ -33,7 +33,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div id="playlist-list-sidebar-container" class="map-btn d-none d-lg-flex" style="z-index: 99999">
+  <div id="playlist-list-sidebar-container" class="map-btn d-none d-lg-flex">
     <div
       class="m-4"
       title="spotify sidebar"

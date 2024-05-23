@@ -92,6 +92,86 @@ const setMarkers = (places) => {
     if (places[i].firstImg == "") {
       places[i].firstImg = preparingImg;
     }
+    let infoContent = document.createElement("div");
+    infoContent.classList.add(
+      "p-2",
+      "d-inline-block",
+      "text-left",
+      "m-1",
+      "mb-2",
+      "info-container"
+    );
+    infoContent.setAttribute("id", "info-container");
+
+    let infoRowTop = document.createElement("div");
+    infoRowTop.classList.add(
+      "pl-3",
+      "pr-3",
+      "row",
+      "flex-row",
+      "flex-nowrap",
+      "justify-content-between",
+      "attr"
+    );
+
+    let infoRowBottom = document.createElement("div");
+    infoRowBottom.classList.add(
+      "pl-4",
+      "pr-4",
+      "mt-2",
+      "row",
+      "flex-row",
+      "flex-nowrap",
+      "justify-content-between"
+    );
+
+    let infoAddPathBtn = document.createElement("button");
+    infoAddPathBtn.classList.add("btn", "btn-outline-primary", "btn-rad");
+    infoAddPathBtn.innerHTML = "경로에 추가";
+    infoAddPathBtn.addEventListener("click", () => {
+      addedPlace(places[i]);
+    });
+    let infoCloseBtn = document.createElement("button");
+    infoCloseBtn.classList.add("btn", "btn-outline-secondary", "mr-2", "btn-rad");
+    infoCloseBtn.innerHTML = "닫기";
+    infoCloseBtn.addEventListener("click", () => {
+      this.closeInfo();
+    });
+
+    infoRowBottom.append(infoCloseBtn, infoAddPathBtn);
+
+    let infoLeft = document.createElement("div");
+
+    let infoLeftBottom = document.createElement("div");
+    let infoTitle = document.createElement("h5");
+    infoTitle.classList.add("attr-title");
+    infoTitle.innerHTML = places[i].title;
+    let infoAddr = document.createElement("h6");
+    infoAddr.classList.add("small-font");
+    infoAddr.innerHTML = places[i].addr1 + " " + places[i].addr2;
+    let infoRight = document.createElement("div");
+    infoRight.classList.add("p-2");
+    let infoImg = document.createElement("img");
+    infoImg.src = places[i].firstImg;
+    infoImg.width = 100;
+    infoImg.style = "aspect-ratio:1";
+
+    infoLeftBottom.append(infoAddr);
+    infoLeft.append(infoTitle, infoLeftBottom);
+    infoLeft.classList.add(
+      "p-1",
+      "pl-3",
+      "pr-3",
+      "row",
+      "flex-column",
+      "flex-wrap",
+      "justify-content-between"
+    );
+
+    infoRight.append(infoImg);
+    infoRowTop.append(infoLeft, infoRight);
+    infoContent.append(infoRowTop, infoRowBottom);
+
     positions.push({
       contentId: places[i].contentId,
       idx: i,
@@ -99,29 +179,10 @@ const setMarkers = (places) => {
       addr: places[i].addr1,
       img: places[i].firstImg,
       //TODO: 이 부분도 컴포넌트로 뺄 수 있나..?
-      content:
-        '<div class="info">' +
-        '<div class="title">' +
-        places[i].title +
-        "</div>" +
-        '<div class="body">' +
-        '<div class="img">' +
-        '<img src="' +
-        places[i].firstImg +
-        '" width="80" height="70">' +
-        "</div>" +
-        "</div>" +
-        '<div class="desc">' +
-        '<div class="ellipsis">' +
-        places[i].addr1 +
-        "</div>" +
-        '<div class="jibun ellipsis">' +
-        places[i].addr2 +
-        "</div>" +
-        "</div>" +
-        "</div>",
+      content: infoContent,
       latlng: placePosition,
     });
+
     addMarker(positions[i]);
     bounds.extend(placePosition);
   }
@@ -162,17 +223,15 @@ const addPlace = (position) => {
   console.log("position");
   console.log(position);
   if (duplicateCheck(position)) {
-    addedPlaces.value.push({
-      contentId: position.contentId,
-      idx: position.idx,
-      title: position.title,
-      addr: position.addr,
-      img: position.img,
-      latitude: position.latlng.La,
-      longitude: position.latlng.Ma,
-    });
-
-    updateMap();
+    // addedPlaces.value.push({
+    //   contentId: position.contentId,
+    //   idx: position.idx,
+    //   title: position.title,
+    //   addr: position.addr,
+    //   img: position.img,
+    //   latitude: position.latlng.La,
+    //   longitude: position.latlng.Ma,
+    // });
     course.value.push({
       contentId: position.contentId,
       idx: position.idx,
@@ -182,6 +241,8 @@ const addPlace = (position) => {
       latitude: position.latlng.La,
       longitude: position.latlng.Ma,
     });
+    course.value = addedPlaces.value;
+    updateMap();
   }
   sendPathUpdate();
 };
@@ -203,7 +264,6 @@ const duplicateCheck = (position) => {
 // 지도 업데이트 함수
 const updateMap = () => {
   console.log("updateMap");
-  console.log(course.value);
   if (course.value.length >= 2) {
     drawLine();
   } else {
