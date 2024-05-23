@@ -2,7 +2,7 @@
   <div
     class="w-100"
     style="
-      margin-top:5%;
+      margin-right: 0px;
       margin-left: 0px;
       display: flex;
       overflow-y: hidden;
@@ -60,7 +60,7 @@
     <!-- kakao map -->
     <KakaoMap :places="places" ref="kakaomap" />
 
-    <!-- <div class="col-md-3 mb-3 text-center d-flex col">
+    <div class="col-md-3 mb-3 text-center d-flex col">
     <input
     id="sendedPushMember"
     class="form-control mr-2"
@@ -77,7 +77,7 @@
     >
     초대하기
   </button>
-</div> -->
+</div>
   </div>
 </template>
 
