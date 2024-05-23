@@ -10,6 +10,7 @@ const props = defineProps({
 const addTrack = () => {
   // playlistStore.addtracks(track);
   trackStore.addTrack(props.track);
+  console.log('in resultitem')
 };
 </script>
 

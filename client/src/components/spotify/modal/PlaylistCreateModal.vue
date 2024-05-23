@@ -230,4 +230,14 @@ label.check input:checked + span {
 label.check span {
   border-radius: 20px;
 }
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;  
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  max-width:100%;
+}
 </style>

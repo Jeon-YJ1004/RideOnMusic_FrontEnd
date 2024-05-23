@@ -33,18 +33,16 @@ watch(
 watch(
   () => addedPlaces.value,
   (places) => {
+    if(course.value!==places)
     course.value = places;
+    console.log('watch addedplaces'+places)
   }
 );
 watch(
   () => course.value,
   (newPlaces, oldPlaces) => {
-    console.log(course.value);
-    if (newPlaces.length >= 2) {
-      drawLine();
-    } else {
-      removeDraw();
-    }
+    console.log(newPlaces);
+    updateMap()
   },
   { deep: true }
 );
@@ -100,26 +98,15 @@ const setMarkers = (places) => {
       img: places[i].firstImg,
       //TODO: 이 부분도 컴포넌트로 뺄 수 있나..?
       content:
-        '<div class="info">' +
-        '<div class="title">' +
-        places[i].title +
-        "</div>" +
-        '<div class="body">' +
-        '<div class="img">' +
-        '<img src="' +
-        places[i].firstImg +
-        '" width="80" height="70">' +
-        "</div>" +
-        "</div>" +
-        '<div class="desc">' +
-        '<div class="ellipsis">' +
-        places[i].addr1 +
-        "</div>" +
-        '<div class="jibun ellipsis">' +
-        places[i].addr2 +
-        "</div>" +
-        "</div>" +
-        "</div>",
+        `<div style="display:flex">
+          <div class="p-1 pl-3 row flex-column justify-content-between">
+            <h5 class="attr-title"> ${ places[i].title}</h5>
+            <h6 class="small-font">${places[i].addr1} ${places[i].addr2}</h6>
+          </div>
+          <div class="p-2">
+            <img src='${places[i].firstImg}'  style="width:80px;aspect-ratio:1;"/>
+          </div>
+        </div>`,
       latlng: placePosition,
     });
     addMarker(positions[i]);
@@ -162,15 +149,15 @@ const addPlace = (position) => {
   console.log("position");
   console.log(position);
   if (duplicateCheck(position)) {
-    addedPlaces.value.push({
-      contentId: position.contentId,
-      idx: position.idx,
-      title: position.title,
-      addr: position.addr,
-      img: position.img,
-      latitude: position.latlng.La,
-      longitude: position.latlng.Ma,
-    });
+    // addedPlaces.value.push({
+    //   contentId: position.contentId,
+    //   idx: position.idx,
+    //   title: position.title,
+    //   addr: position.addr,
+    //   img: position.img,
+    //   latitude: position.latlng.La,
+    //   longitude: position.latlng.Ma,
+    // });
 
     updateMap();
     course.value.push({
@@ -190,7 +177,8 @@ const sendPathUpdate = () => {
   socket.send(
     JSON.stringify({
       type: "path",
-      contents: course.value,
+      contents: addedPlaces.value,
+      memberId:sessionStorage.getItem('memberId')
     })
   );
 };
@@ -203,7 +191,7 @@ const duplicateCheck = (position) => {
 // 지도 업데이트 함수
 const updateMap = () => {
   console.log("updateMap");
-  console.log(course.value);
+  // console.log(course.value);
   if (course.value.length >= 2) {
     drawLine();
   } else {

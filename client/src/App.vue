@@ -4,7 +4,7 @@ import VHeader from "./components/common/VHeader.vue";
 </script>
 
 <template>
-  <div>
+  <div style="overflow: hidden;">
     <VHeader />
     <div>
       <RouterView />
