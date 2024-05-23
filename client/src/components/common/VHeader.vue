@@ -48,62 +48,78 @@ onMounted(() => {
 <template>
   <div>
     <div id="header">
-    <nav class="navbar navbar-expand-lg navbar-light  shadow fixed-top navbar-custom">
-      <div class="container-fluid">
-        <!-- 로고를 왼쪽에 위치시키기 위한 div -->
-        <div class="navbar-brand-left">
-          <router-link :to="{ name: 'home' }" class="navbar-brand fw-bold">
-            <img src="@/assets/img/banner.jpeg" width="200px">
-          </router-link>
+      <nav class="navbar navbar-expand-lg navbar-light shadow fixed-top navbar-custom">
+        <div class="container-fluid">
+          <!-- 로고를 왼쪽에 위치시키기 위한 div -->
+          <div class="navbar-brand-left">
+            <router-link :to="{ name: 'home' }" class="navbar-brand fw-bold">
+              <img src="@/assets/img/banner.jpeg" width="200px" />
+            </router-link>
+          </div>
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent"
+            aria-controls="navbarContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <!-- 네비게이션 링크 컨테이너 -->
+          <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <router-link :to="{ name: 'trip' }" class="nav-link">지역별관광지</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link :to="{ name: 'plan' }" class="nav-link">나의여행계획</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link :to="{ name: 'board' }" class="nav-link">여행정보공유</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link :to="{ name: 'qnaboard' }" class="nav-link">큐앤에이</router-link>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+              <template v-if="isLogin">
+                <li class="nav-item">
+                  <router-link :to="{ name: 'membermypage' }" class="nav-link"
+                    >마이페이지</router-link
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" aria-current="page" @click="logout">로그아웃</a>
+                </li>
+              </template>
+              <template v-else>
+                <li class="nav-item">
+                  <router-link :to="{ name: 'memberjoin' }" class="nav-link">회원가입</router-link>
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    aria-current="page"
+                    href="#"
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+                    >로그인</a
+                  >
+                </li>
+              </template>
+            </ul>
+          </div>
         </div>
+      </nav>
+    </div>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+    <!-- // 코드수정 -->
 
-        <!-- 네비게이션 링크 컨테이너 -->
-        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <router-link :to="{ name: 'trip' }" class="nav-link">지역별관광지</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link :to="{ name: 'plan' }" class="nav-link">나의여행계획</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link :to="{ name: 'board' }" class="nav-link">여행정보공유</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link :to="{ name: 'qnaboard' }" class="nav-link">큐앤에이</router-link>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <template v-if="isLogin">
-              <li class="nav-item">
-                <router-link :to="{ name: 'membermypage' }" class="nav-link">마이페이지</router-link>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" aria-current="page" @click="logout">로그아웃</a>
-              </li>
-            </template>
-            <template v-else>
-              <li class="nav-item">
-                <router-link :to="{ name: 'memberjoin' }" class="nav-link">회원가입</router-link>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</a>
-              </li>
-            </template>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  </div>
-
-
-            <!-- // 코드수정 -->
-
-            <!-- <template v-for="menu in menuList" :key="menu.routeName">
+    <!-- <template v-for="menu in menuList" :key="menu.routeName">
             <template v-if="menu.show">
               <template v-if="menu.routeName === 'member-logout'">
                 <li class="nav-item">
@@ -121,8 +137,7 @@ onMounted(() => {
               </template>
             </template>
           </template> -->
-          <!-- // 코드수정 -->
-
+    <!-- // 코드수정 -->
 
     <!-- 로그인 모달 -->
     <div

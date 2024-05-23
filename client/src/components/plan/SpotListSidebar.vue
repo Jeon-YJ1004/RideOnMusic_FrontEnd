@@ -53,7 +53,12 @@
                     <ul>
                       <li>
                         <div class="label">플랜이름:</div>
-                        <input v-model="form.planTitle" type="text" placeholder="플랜 이름" />
+                        <input
+                          v-model="form.planTitle"
+                          type="text"
+                          placeholder="플랜 이름"
+                          required
+                        />
                       </li>
                       <li>
                         <div class="label">일정 :</div>
@@ -83,47 +88,10 @@
                     <br />
 
                     <div id="buttons">
-                      <!-- <button id="shortest-path-btn" class="btn btn-primary btn-ghost btn-open"
-                                @click="sortPlacesByShortestPath()" type="button">최단경로로
-                                변환하기
-                            </button> -->
-                      <!-- 최종 계획 정보를 PlannerRegister에게 넘긴다. -->
                       <button type="submit" class="btn btn-primary btn-ghost btn-open">저장</button>
                     </div>
                     <div id="area_sel"></div>
-
-                    <!-- 드래그 구현중      -->
-                    <!-- <div id="area_sel">
-                        <div v-for="place in addedPlaces.value" :key="place.idx" style="display:flex">
-                            <img :src="place.img" style="width: 50px; height: 50px;">
-                            <div>
-                                [{{ place.title }}]<br>
-                                지번 주소: {{ place.addr }}
-                            </div>
-                            <button @click="removePlace(place.idx)">삭제</button>
-                        </div>
-                    </div> -->
-                    <SpotList
-                      :course="addedPlaces.value"
-                      ref="planlist"
-                      :form="form"
-                      @init-form="setInitForm"
-                      @on-update-path="reqUpdatePath"
-                      
-                    />
-                    
-                    <!-- <div
-                      v-for="place in places.value"
-                      :key="place.index"
-                      class="drag-handle draggable"
-                    >
-                      <img :src="place.img" style="width: 50px; height: 50px" />
-                      <div>
-                        [{{ place.title }}]<br />
-                        지번 주소: {{ place.addr }}
-                      </div>
-                      <button @click="removePlace(place.idx)">삭제</button>
-                    </div> -->
+                    <SpotList ref="planlist" :form="form" @init-form="setInitForm" />
                   </div>
                 </div>
               </form>
@@ -136,32 +104,31 @@
 </template>
 
 <script setup>
-import { onMounted, onUpdated, ref, watch,defineExpose } from "vue";
+import { onMounted, onUpdated, ref, watch, defineExpose } from "vue";
 import { useRouter } from "vue-router";
-import { chatService, socket, handleSocketMessage, addedPlaces } from "@/services/ChatService.js";
-import { VueDraggableNext } from "vue-draggable-next";
-
+import { socket } from "@/services/ChatService.js";
 import { storeToRefs } from "pinia";
+
+import { Axios } from "@/util/http-commons.js";
 import store from "@/stores";
-import { useMemberStore } from "@/stores/memberStore.js";
-import SpotList from "./SpotList.vue"
-;
+import SpotList from "./SpotList.vue";
+const http = Axios();
+const apiurl = ref(import.meta.env.VITE_API_URL); //import 방식으로 고치기
+
+const planStore = store.usePlanStore();
+const { course } = storeToRefs(planStore);
+const memberStore = store.useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
+const playlistStore = store.usePlaylistStore();
 
 const router = useRouter();
 const props = defineProps({
   keyword: String,
   places: Object,
 });
-const emit =defineEmits(["req-update-path","set-init-map"])
-const markerImg = "/src/assets/img/marker7.png";
-const preparingImg = "/src/assets/img/preparingimg.jpg";
 
-const planlist=ref()
-var markers = [];
-var overlays = [];
-var positions = [];
-let map = null;
-var polyline; // 선을 담는 변수
+const planlist = ref();
+
 const file = ref();
 const initialForm = {
   planTitle: "",
@@ -176,20 +143,56 @@ const addFile = async () => {
   form.value.thumbnail = file.value.files[0];
 };
 
-
-function addPathtoSlider(path) {
-  planlist.value.addPath(path);
+function setInitForm() {
+  form.value = initialForm;
 }
-
-function setInitForm(){
-  form.value=initialForm;
-}
-function reqUpdatePath(course){
-  console.log(course);
-  emit("req-update-path",course);
-}
-
-defineExpose({addPathtoSlider})
+//서버에 등록 요청
+const handleFormSubmit = async () => {
+  console.log("FormSubmit");
+  if (!course.value) {
+    alert("추가된 장소가 없습니다.");
+    return;
+  }
+  const formData = new FormData();
+  formData.append("planTitle", form.value.planTitle);
+  formData.append("startDate", form.value.startDate);
+  formData.append("endDate", form.value.endDate);
+  formData.append("transport", form.value.transport);
+  formData.append("memberId", userInfo.value.memberId);
+  const contentIds = course.value.map((place) => place.contentId);
+  formData.append("selectedPlaces", contentIds);
+  if (playlistStore.hasPlaylist) {
+    console.log(playlistStore.planPlaylistId);
+    formData.append("playlistId", playlistStore.planPlaylistId);
+  }
+  if (form.value.thumbnail) {
+    formData.append("file", form.value.thumbnail);
+  }
+  displayFormData(formData);
+  try {
+    const response = await http.post(apiurl.value + "plan", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    form.value = initialForm;
+    course.value = [];
+    router.push();
+    socket.send(
+      JSON.stringify({
+        type: "plan",
+      })
+    );
+  } catch (error) {
+    console.error("Error submitting form:", error);
+  }
+};
+//디버깅
+const displayFormData = (formData) => {
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}: ${value}`);
+  }
+};
 </script>
 
 <style scoped lang="scss">
