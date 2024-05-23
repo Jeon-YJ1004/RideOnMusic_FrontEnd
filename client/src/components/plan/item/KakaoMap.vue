@@ -30,7 +30,12 @@ watch(
     setMarkers(places);
   }
 );
-
+watch(
+  () => addedPlaces.value,
+  (places) => {
+    course.value = places;
+  }
+);
 watch(
   () => course.value,
   (newPlaces, oldPlaces) => {
@@ -185,7 +190,7 @@ const sendPathUpdate = () => {
   socket.send(
     JSON.stringify({
       type: "path",
-      contents: addedPlaces.value,
+      contents: course.value,
     })
   );
 };

@@ -196,10 +196,10 @@ const handleFormSubmit = async () => {
     });
     form.value = initialForm;
     course.value = [];
-    router.push();
     socket.send(
       JSON.stringify({
         type: "plan",
+        memberId: userInfo.value.memberId
       })
     );
   } catch (error) {
