@@ -58,6 +58,7 @@ export const useMemberStore = defineStore(
           if (response.status === httpStatusCode.OK) {
             userInfo.value = response.data.userInfo;
             isLogin.value = true;
+            sessionStorage.setItem("memberId", userInfo.value.memberId);
           } else {
             console.log("유저 정보 없음!!!!");
           }

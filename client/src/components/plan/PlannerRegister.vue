@@ -2,7 +2,7 @@
   <div
     class="w-100"
     style="
-      margin-top:5%;
+      margin-top: 5%;
       margin-left: 0px;
       display: flex;
       overflow-y: hidden;
@@ -59,25 +59,25 @@
     </div>
     <!-- kakao map -->
     <KakaoMap :places="places" ref="kakaomap" />
-    <!-- 
+
     <div class="col-md-3 mb-3 text-center d-flex col">
-      <input
-        id="sendedPushMember"
-        class="form-control mr-2"
-        type="text"
-        v-model="sendedPushMember"
-        placeholder="초대할 멤버 ID 입력"
-        aria-label="초대할 멤버 ID 입력"
-      />
-      <button
-        class="btn btn-primary btn-sm"
-        id="btn-invite"
-        style="white-space: nowrap; margin-left: 5%"
-        @click="inviteMember"
-      >
-        초대하기
-      </button>
-    </div> -->
+    <input
+    id="sendedPushMember"
+    class="form-control mr-2"
+    type="text"
+    v-model="sendedPushMember"
+    placeholder="초대할 멤버 ID 입력"
+    aria-label="초대할 멤버 ID 입력"
+    />
+    <button
+    class="btn btn-primary btn-sm"
+    id="btn-invite"
+    style="white-space: nowrap; margin-left: 5%"
+    @click="inviteMember"
+    >
+    초대하기
+  </button>
+</div>
   </div>
 </template>
 
