@@ -7,23 +7,17 @@
     id="search-sidebar-container"
     class="map-btn d-lg-flex"
   >
-    <button
+    <div
       title="여행지 리스트"
-      style="
-        background-color: white;
-        border-radius: 100%;
-        aspect-ratio: 1/1;
-        width: 30px;
-        height: 30px;
-      "
       id="btn-search-sidebar"
       data-bs-toggle="offcanvas"
       data-bs-target="#sidebar-plan"
       aria-controls="sidebar-plan"
       aria-label="Toggle navigation"
+      class="sidebarBtn"
     >
-      <i class="bi bi-layout-sidebar-inset w-100"></i>
-    </button>
+      <img src="@/assets/img/compass.png" width="30px" class="sidebarBtn" />
+    </div>
     <div
       class="offcanvas offcanvas-start"
       tabindex="-1"
@@ -32,72 +26,97 @@
       no-header
       shadow
     >
-      <div class="px-3 py-3 h-100 d-flex flex-column offcanvas-header">
-        <h2 class="">
-          <img
-            src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Compass.png"
-            alt="Compass"
-            width="50"
-            height="50"
-          />
+      <div class="offcanvas-header" style="display: flex; flex-direction: column">
+        <h4 class="offcanvas-title">
+          <img src="@/assets/img/baggage.png" alt="Compass" width="50" height="50" />
           여행 코스
-        </h2>
+        </h4>
         <hr style="width: 100%; margin-bottom: 0" />
-        <!-- body 시작 -->
-        <div class="offcanvas-body col">
-          <div class="row justify-content-center gx-5">
-            <div class="col-md-3 map_wrap">
-              <form @submit.prevent="handleFormSubmit" enctype="multipart/form-data">
-                <div id="menu_wrap" class="bg_white">
-                  <div id="planner_body">
-                    <ul>
-                      <li>
-                        <div class="label">플랜이름:</div>
-                        <input
-                          v-model="form.planTitle"
-                          type="text"
-                          placeholder="플랜 이름"
-                          required
-                        />
-                      </li>
-                      <li>
-                        <div class="label">일정 :</div>
-                        <input v-model="form.startDate" type="date" value="2024-04-05" /> -
-                        <input v-model="form.endDate" type="date" value="2024-04-07" />
-                      </li>
-                      <li id="transport">
-                        <div class="label">교통수단 :</div>
-                        <div class="content ib">
-                          <select v-model="form.transport">
-                            <option value="public" selected>대중교통</option>
-                            <option value="ownCar">자차</option>
-                          </select>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="label">썸네일 :</div>
-                        <input
-                          @change="addFile($event)"
-                          ref="file"
-                          type="file"
-                          id="file"
-                          name="file"
-                        />
-                      </li>
-                    </ul>
-                    <br />
-
-                    <div id="buttons">
-                      <button type="submit" class="btn btn-primary btn-ghost btn-open">저장</button>
-                    </div>
-                    <div id="area_sel"></div>
-                    <SpotList ref="planlist" :form="form" @init-form="setInitForm" />
-                  </div>
+      </div>
+      <div class="offcanvas-body">
+        <form @submit.prevent="handleFormSubmit" enctype="multipart/form-data">
+          <div id="menu_wrap" class="bg_white">
+            <div id="planner_body" class="registration-form">
+              <div class="form-group" style="width: 200px">
+                <input
+                  v-model="form.planTitle"
+                  type="text"
+                  placeholder="플랜 이름"
+                  required
+                  class="form-control item"
+                />
+              </div>
+              <div style="width: 350px; display: flex" class="form-group">
+                <div class="form-group" style="margin-right: 10px">
+                  <label for="">시작 날짜 :</label>
+                  <input
+                    aria-label="시작날짜"
+                    v-model="form.startDate"
+                    type="date"
+                    required
+                    aria-required="true"
+                    class="form-control item"
+                  />
                 </div>
-              </form>
+                <div class="form-group">
+                  <label for="">종료 날짜 :</label>
+                  <input
+                    v-model="form.endDate"
+                    type="date"
+                    required
+                    aria-required="true"
+                    class="form-control item"
+                  />
+                </div>
+              </div>
+              <div id="transport" class="form-group" style="margin-bottom: 10px">
+                <div class="label">교통수단 :</div>
+                <div>
+                  <label class="check">
+                    <input
+                      v-model="form.transport"
+                      value="public"
+                      style="width: 100px"
+                      type="radio"
+                    />
+                    <span>대중 교통</span>
+                  </label>
+                  <label class="check">
+                    <input
+                      v-model="form.transport"
+                      value="ownCar"
+                      class="form-control item"
+                      style="width: 100px"
+                      type="radio"
+                    />
+                    <span>자차</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="label">썸네일 :</div>
+                <input
+                  @change="addFile($event)"
+                  ref="file"
+                  type="file"
+                  id="file"
+                  name="file"
+                  class="form-control item"
+                />
+              </div>
+              <div class="form-group">
+                <label for="">여행지 :</label>
+                <br />
+                <div>
+                  <SpotList ref="planlist" :form="form" @init-form="setInitForm" />
+                </div>
+              </div>
+              <div id="buttons">
+                <button type="submit" class="btn btn-outline-primary bg-light">저장</button>
+              </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -132,8 +151,8 @@ const planlist = ref();
 const file = ref();
 const initialForm = {
   planTitle: "",
-  startDate: "2024-04-05",
-  endDate: "2024-04-07",
+  startDate: "",
+  endDate: "",
   transport: "public",
   thumbnail: null,
 };
@@ -196,6 +215,9 @@ const displayFormData = (formData) => {
 </script>
 
 <style scoped lang="scss">
+.label {
+  width: 100px;
+}
 .map-btn:hover,
 .map-btn button:hover,
 .map-btn button svg:hover {
@@ -206,16 +228,68 @@ const displayFormData = (formData) => {
 .map-btn button svg:focus {
   color: rgba(0, 0, 0, 0.7);
 }
-.side-header {
-  font-family: "NanumSquareNeo-ExtraBold";
-  letter-spacing: -2.5px;
-  text-align: left;
+
+.registration-form form {
+  background-color: #fff;
+  max-width: 600px;
+  margin: auto;
+  padding: 30px 50px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.075);
 }
 
-::v-deep {
-  .b-sidebar-body {
-    overflow-y: hidden !important;
-    overflow-x: hidden;
+.registration-form .item {
+  border-radius: 20px;
+  margin-bottom: 10px;
+  padding: 10px 10px;
+  height: 40px;
+}
+
+@media (max-width: 576px) {
+  .registration-form form {
+    padding: 50px 20px;
   }
+}
+input[type="date"]::before {
+  content: attr(data-placeholder);
+  width: 100%;
+}
+
+input[type="date"]:focus::before,
+input[type="date"]:valid::before {
+  display: none;
+}
+
+label.check {
+  cursor: pointer;
+}
+label.check input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+label.check span {
+  padding: 7px 16px;
+  border: 2px solid #ffff;
+  display: inline-block;
+  color: #0d6efd;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+label.check input:checked + span {
+  border-color: #0d6efd;
+  // background-color: #0d6efd;
+  // color: #fff;
+}
+label.check span {
+  border-radius: 20px;
+}
+
+.sidebarBtn:hover {
+  transition: all 0.2s linear;
+  transform: scale(1.3);
 }
 </style>
