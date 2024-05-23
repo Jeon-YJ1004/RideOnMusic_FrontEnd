@@ -82,14 +82,10 @@ const handleSocketMessage = (eventData) => {
       }));
     }
   }
-  else if (eventData.type === 'push'){
+   else if (eventData.type === 'push' || eventData.type === 'receiver') {
     alert("초대 완료");
     router.push({ name: 'plannerRegisterJoin' });
-    
-   }else if (eventData.type === 'receiver') {
-    alert("초대 완료");
-    router.push({ name: 'plannerRegisterJoin' });
-   }else if(eventData.type === 'inviteError'){
+  }else if(eventData.type === 'inviteError'){
     alert(eventData.errorMsg);
   }
 }
