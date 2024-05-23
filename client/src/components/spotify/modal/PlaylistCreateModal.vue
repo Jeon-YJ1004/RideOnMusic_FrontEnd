@@ -81,50 +81,83 @@ onMounted(() => {});
 
     <template class="modal fade" id="creatPLModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-dark">
-          <div class="modal-body">
-            <span class="nav-link active" aria-current="page" href="#"
-              >노래 추천이 필요하다면 해쉬 태그를 설정해 주세요</span
-            >
-            <div class="col">
-              <!-- {{ selected }} -->
-              <select
-                class="form-select form-select-sm"
-                aria-label=".form-select-sm "
-                v-for="(select, index) in selects"
-                v-model="selected[select]"
-                :key="select"
-              >
-                <option v-for="option in options[index]" :value="option.value" :key="option.value">
-                  {{ option.text }}
-                </option>
-              </select>
-            </div>
+        <div class="modal-content text-dark" style="height: 430px">
+          <div class="modal-body registration-form">
+            <h4><img src="@/assets/img/headphone.png" style="width: 35px" /> 플리 만들기</h4>
+
             <form class="form-floating mb-3">
-              <input
-                type="name"
-                class="form-control"
-                id="floatingInput"
-                placeholder="playlist Name"
-                v-model="name"
-                required
-              />
-              <label for="playlistName">playlist name</label>
-              <div class="form-floating">
-                <textarea
-                  class="form-control"
-                  placeholder="Leave a comment here"
-                  id="playlist Description"
-                  v-model="description"
-                ></textarea>
-                <label for="playlistDescription">playlist description</label>
+              <div id="planner_body" class="registration-form">
+                <div class="form-group" style="width: 300px">
+                  <input
+                    v-model="name"
+                    type="text"
+                    placeholder="플레이리스트 이름"
+                    id="playlistName"
+                    required
+                    class="form-control item"
+                  />
+                </div>
+                <div class="form-group" style="width: 300px">
+                  <input
+                    v-model="description"
+                    type="text"
+                    placeholder="플레이리스트 설명"
+                    id="playlistDescription"
+                    required
+                    class="form-control item"
+                  />
+                </div>
+              </div>
+              <hr />
+              <span style="font-size: 0.8rem; font-style: italic; color: #a9a9a9"
+                >노래 추천이 필요하다면 해쉬 태그를 설정해 주세요</span
+              >
+              <div>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-evenly;
+                    align-items: center;
+                    width: 100%;
+                  "
+                >
+                  <div>장르</div>
+                  <div>여행 목적</div>
+                  <div>시대</div>
+                </div>
+                <div
+                  style="
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <select
+                    class="form-control"
+                    aria-label=".form-select-sm "
+                    v-for="(select, index) in selects"
+                    v-model="selected[select]"
+                    :key="select"
+                    style="margin: 5px"
+                  >
+                    <option
+                      v-for="option in options[index]"
+                      :value="option.value"
+                      :key="option.value"
+                    >
+                      {{ option.text }}
+                    </option>
+                  </select>
+                </div>
               </div>
             </form>
             <div class="modal-footer mt-3">
               <div class="d-flex justify-content-center">
                 <button
                   type="button"
-                  class="btn btn-outline-success me-2"
+                  class="btn btn-outline-primary me-2"
                   data-bs-dismiss="modal"
                   @click="create"
                   id="LOGIN"
@@ -140,4 +173,61 @@ onMounted(() => {});
   </div>
 </template>
 
-<style></style>
+<style>
+.registration-form form {
+  background-color: #fff;
+  max-width: 600px;
+  margin: auto;
+  padding: 30px 50px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.075);
+}
+
+.registration-form .item {
+  border-radius: 20px;
+  margin-bottom: 10px;
+  padding: 10px 10px;
+  height: 40px;
+}
+
+@media (max-width: 576px) {
+  .registration-form form {
+    padding: 50px 20px;
+  }
+}
+input[type="date"]::before {
+  content: attr(data-placeholder);
+  width: 100%;
+}
+
+input[type="date"]:focus::before,
+input[type="date"]:valid::before {
+  display: none;
+}
+
+label.check {
+  cursor: pointer;
+}
+label.check input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+label.check span {
+  padding: 7px 16px;
+  border: 2px solid #ffff;
+  display: inline-block;
+  color: #0d6efd;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+label.check input:checked + span {
+  border-color: #0d6efd;
+}
+label.check span {
+  border-radius: 20px;
+}
+</style>

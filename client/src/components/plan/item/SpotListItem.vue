@@ -2,7 +2,7 @@
   <div
     id="result-item-container"
     class="w-100"
-    v-if="attr"
+    v-if="course"
     @click="
       () => {
         setMarker(attr.attractionDto.latitude, attr.attractionDto.longitude);
@@ -72,12 +72,7 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["set-marker", "on-update-attr", "on-delete"]);
-
-const visible = ref(false);
-const favored = ref(false);
-
-const attr = computed(() => props.attrProp);
+// const emit = defineEmits(["set-marker", "on-update-attr", "on-delete"]);
 
 const getContentType = (id) => {
   switch (id) {
@@ -100,14 +95,6 @@ const getContentType = (id) => {
   }
 };
 
-const setMarker = (lat, lng) => {
-  let attrItem;
-  if (props.type == "search") attrItem = attr.value;
-  else attrItem = attr.value.attractionDto;
-
-  emit("set-marker", { lat, lng, attr: attrItem });
-};
-
 const onDelete = () => {
   const params = {
     order: attr.value.order,
@@ -115,27 +102,6 @@ const onDelete = () => {
   };
   emit("on-delete", params);
 };
-
-const favorAttr = () => {
-  const params = {
-    contentId: attr.value.contentId,
-  };
-  postWish(params, () => {
-    favored.value = true;
-  });
-};
-
-const unfavorAttr = () => {
-  deleteWish(attr.value.contentId, () => {
-    favored.value = false;
-  });
-};
-
-onMounted(() => {
-  checkWish(attr.value.contentId, (res) => {
-    favored.value = res.data > 0;
-  });
-});
 </script>
 <style scoped lang="scss">
 .heart:hover {

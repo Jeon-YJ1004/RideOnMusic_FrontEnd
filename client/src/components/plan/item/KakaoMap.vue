@@ -1,43 +1,28 @@
 <script setup>
-import { onMounted, onUpdated, ref, watch,defineExpose } from "vue";
+import { onMounted, watch, defineExpose } from "vue";
 import { Axios } from "@/util/http-commons.js";
 import { useRouter } from "vue-router";
 import { chatService, socket, handleSocketMessage, addedPlaces } from "@/services/ChatService.js";
-import { VueDraggableNext } from "vue-draggable-next";
 import { storeToRefs } from "pinia";
 import store from "@/stores";
-import { useMemberStore } from "@/stores/memberStore.js";
 
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
-const router = useRouter();
+const planStore = store.usePlanStore();
+const { course } = storeToRefs(planStore);
+
 const props = defineProps({
   keyword: String,
   places: Object,
 });
-const emit = defineEmits(["add-path"]);
-const playlistStore = store.usePlaylistStore();
 
-const http = Axios();
 const markerImg = "/src/assets/img/marker7.png";
 const preparingImg = "/src/assets/img/preparingimg.jpg";
 const appKey = import.meta.env.VITE_KAKAO_APPKEY;
-const apiurl = ref(import.meta.env.VITE_API_URL); //import 방식으로 고치기
 
 var markers = [];
 var overlays = [];
 var positions = [];
 let map = null;
 var polyline; // 선을 담는 변수
-const file = ref();
-const initialForm = {
-  planTitle: "",
-  startDate: "2024-04-05",
-  endDate: "2024-04-07",
-  transport: "public",
-  thumbnail: null,
-};
-const form = ref(initialForm);
 
 watch(
   () => props.places,
@@ -47,8 +32,9 @@ watch(
 );
 
 watch(
-  () => addedPlaces.value,
+  () => course.value,
   (newPlaces, oldPlaces) => {
+    console.log(course.value);
     if (newPlaces.length >= 2) {
       drawLine();
     } else {
@@ -92,7 +78,7 @@ const initMap = () => {
   map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
 };
 
-const setMarkers=(places)=> {
+const setMarkers = (places) => {
   var bounds = new kakao.maps.LatLngBounds();
   resetMarkers();
   removeDraw();
@@ -135,9 +121,9 @@ const setMarkers=(places)=> {
     bounds.extend(placePosition);
   }
   map.setBounds(bounds);
-}
+};
 
-const addMarker=(position)=> {
+const addMarker = (position) => {
   var imageSrc = markerImg,
     imageSize = new kakao.maps.Size(80, 80),
     imgOptions = {
@@ -164,12 +150,12 @@ const addMarker=(position)=> {
 
   marker.setMap(map);
   markers.push(marker);
-}
+};
 
 // 장소 추가 함수
-const addPlace=(position)=> {
-    console.log("position")
-    console.log(position);
+const addPlace = (position) => {
+  console.log("position");
+  console.log(position);
   if (duplicateCheck(position)) {
     addedPlaces.value.push({
       contentId: position.contentId,
@@ -182,7 +168,7 @@ const addPlace=(position)=> {
     });
 
     updateMap();
-    emit("add-path", {
+    course.value.push({
       contentId: position.contentId,
       idx: position.idx,
       title: position.title,
@@ -193,7 +179,7 @@ const addPlace=(position)=> {
     });
   }
   sendPathUpdate();
-}
+};
 
 const sendPathUpdate = () => {
   socket.send(
@@ -205,53 +191,37 @@ const sendPathUpdate = () => {
 };
 
 // 중복 검사 함수
-const duplicateCheck=(position)=> {
-  return !addedPlaces.value.some((place) => place.contentId === position.contentId);
-}
+const duplicateCheck = (position) => {
+  return !course.value.some((place) => place.contentId === position.contentId);
+};
 
 // 지도 업데이트 함수
-const updateMap=() =>{
-    console.log("addedPlaces")
-    console.log(addedPlaces.value);
-  if (addedPlaces.value.length >= 2) {
+const updateMap = () => {
+  console.log("updateMap");
+  console.log(course.value);
+  if (course.value.length >= 2) {
     drawLine();
   } else {
     removeDraw();
   }
-}
-
-// 장소 제거 함수
-// const removePath=(idx)=> {
-//   const index = addedPlaces.value.findIndex((p) => p.idx === idx);
-//   if (index !== -1) {
-//     addedPlaces.value.splice(index, 1); //인덱스로부터 1개 제거
-//     updateMap();
-//   }
-//   socket.send(
-//     JSON.stringify({
-//       type: "path",
-//       contents: addedPlaces.value,
-//     })
-//   );
-// }
+};
 
 // 인포윈도우를 표시하는 클로저를 만드는 함수입니다
-const makeOverListener=(map, marker, infowindow)=> {
+const makeOverListener = (map, marker, infowindow) => {
   return function () {
     infowindow.open(map, marker);
   };
-}
+};
 
 // 인포윈도우를 닫는 클로저를 호출
-const makeOutListener=(infowindow)=> {
-
+const makeOutListener = (infowindow) => {
   return function () {
     infowindow.close();
   };
-}
+};
 
 // 지도 위에 표시되고 있는 마커,오버레이 모두 제거
-const resetMarkers=()=> {
+const resetMarkers = () => {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(null);
   }
@@ -263,10 +233,10 @@ const resetMarkers=()=> {
   markers = [];
   positions = [];
   addedPlaces.value = [];
-}
+};
 
-const drawLine=()=> {
-  var linePath = addedPlaces.value.map((place) => {
+const drawLine = () => {
+  var linePath = course.value.map((place) => {
     return new kakao.maps.LatLng(place.longitude, place.latitude);
   });
 
@@ -280,23 +250,27 @@ const drawLine=()=> {
   });
 
   polyline.setMap(map);
-}
-const setMarker=(LatLngAndInfo)=> {
+};
+const setMarker = (LatLngAndInfo) => {
   kakaomap.value.setMarker(LatLngAndInfo);
-}
+};
 
 // 모든 선을 지도에서 제거
-const removeDraw=() =>{
+const removeDraw = () => {
   if (polyline) {
     polyline.setMap(null);
   }
-}
+};
 
-defineExpose({initMap, setMarker,setMarkers,resetMarkers, addPlace})
+onMounted(() => {
+  course.value = [];
+});
+
+defineExpose({ initMap, setMarker, setMarkers, resetMarkers, addPlace });
 </script>
 
 <template>
-  <div id="map" style="height: 80vh"></div>
+  <div id="map" style="height: 75vh; width: 90vw"></div>
 </template>
 
 <style scoped>
