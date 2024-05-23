@@ -1,5 +1,15 @@
 <template>
-  <div class="w-100" style="margin-right: 0; margin-left: 0; overflow-y: hidden">
+  <div
+    class="w-100"
+    style="
+      margin-right: 0px;
+      margin-left: 0px;
+      display: flex;
+      overflow-y: hidden;
+      flex-direction: column;
+      align-items: center;
+    "
+  >
     <div
       style="
         display: inline-flex;
@@ -9,13 +19,7 @@
         flex-wrap: nowrap;
       "
     >
-      <SpotListSidebar
-        class=""
-        :places="places"
-        @req-update-path="updatePath"
-        @set-init-map="reqSetInitMap"
-        ref="spotlistSidebar"
-      />
+      <SpotListSidebar class="" :places="places" ref="spotlistSidebar" />
       <div class="text-center" style="height: 40px; margin-left: 30px">
         <VSelect
           :selectOption="sidoList"
@@ -54,7 +58,7 @@
       <MusicSidebar class="col" />
     </div>
     <!-- kakao map -->
-    <KakaoMap :places="places" ref="kakaomap" @add-path="addPath" />
+    <KakaoMap :places="places" ref="kakaomap" />
 
     <!-- <div class="col-md-3 mb-3 text-center d-flex col">
     <input
@@ -97,8 +101,6 @@ import VSelect from "@/components/common/VSelect.vue";
 import MusicSidebar from "@/components/spotify/MusicSidebar.vue";
 import store from "@/stores";
 
-import { useMemberStore } from "@/stores/memberStore.js";
-import { storeToRefs } from "pinia";
 import SpotListSidebar from "@/components/plan/SpotListSidebar.vue";
 
 const route = useRoute();
@@ -108,14 +110,10 @@ const http = Axios();
 const sendedPushMember = ref("");
 
 // 끝
-const courses = ref([]);
-const loaded = ref(false);
-
 const kakaomap = ref(null);
 const spotlistSidebar = ref(null);
 
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
+const memberStore = store.useMemberStore();
 
 function inviteMember() {
   const memberId = sessionStorage.getItem("memberId");
@@ -179,22 +177,6 @@ const search = () => {
   });
 };
 
-function handlePlanSubmission(planData) {
-  const formData = new FormData();
-  for (const key in planData) {
-    formData.append(key, planData[key]);
-  }
-
-  http
-    .post("/plan", formData)
-    .then((response) => {
-      console.log("계획 등록 성공", response);
-    })
-    .catch((error) => {
-      console.error("계획 등록 오류", error);
-    });
-}
-
 const selectSido = (option) => {
   searchItem.value.sidoCode = option;
 };
@@ -202,32 +184,6 @@ const selectSido = (option) => {
 const selectType = (option) => {
   searchItem.value.contentTypeId = option;
 };
-
-function reqSetInitMap(list) {
-  kakaomap.value.setInitMap(list);
-}
-
-function onSearchLatLng(latlng) {
-  spotlistSidebar.value.reqSearch(latlng);
-}
-
-function addPath(info) {
-  console.log("info");
-  console.log(info);
-  spotlistSidebar.value.addPathtoSlider(info);
-}
-
-function removePath(info) {
-  kakaomap.value.removePath(info.idx);
-}
-function updatePath(course) {
-  console.log("막타");
-  console.log(course);
-  kakaomap.value.resetMarkers();
-  if (course) {
-    kakaomap.value.setMarkers(course);
-  }
-}
 
 onMounted(() => {
   getSido();
