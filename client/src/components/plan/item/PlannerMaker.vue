@@ -117,6 +117,7 @@ const handleFormSubmit = async () => {
     socket.send(
       JSON.stringify({
         type: "plan",
+        memberId: userInfo.value.memberId,
       })
     );
   } catch (error) {

@@ -6,21 +6,29 @@ import PlannerListItem from "@/components/plan/item/PlannerListItem.vue";
 import { useMemberStore } from "@/stores/memberStore.js";
 import { storeToRefs } from "pinia"
 import { getPlannerList } from "@/api/plan.js";
+import { useRoute } from "vue-router";
+const router = useRoute();
 
 // 추가 코드
 const memberStore = useMemberStore();
 const { userInfo} = storeToRefs(memberStore);
 //
 
+const joinPlan = router.params.memberId;
 const loaded = ref(false);
 const planners = ref([]);
 
 onMounted(() => {
-    PlannerList();
+    if(joinPlan != null){
+        PlannerList(joinPlan);
+    }else{
+        PlannerList(userInfo.value.memberId);
+    }
+    
 })
 
-const PlannerList = async () => {
-    getPlannerList(userInfo.value.memberId, ({data}) => {
+const PlannerList = async (val) => {
+    getPlannerList(val, ({data}) => {
         planners.value = data.data;
     }, (error) => console.log(error));
 }
