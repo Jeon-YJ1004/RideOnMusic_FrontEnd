@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, watch, defineExpose } from "vue";
+import { onMounted, watch, defineExpose, ref } from "vue";
 import { Axios } from "@/util/http-commons.js";
 import { useRouter } from "vue-router";
 import { chatService, socket, handleSocketMessage, addedPlaces } from "@/services/ChatService.js";
@@ -13,11 +13,11 @@ const props = defineProps({
   keyword: String,
   places: Object,
 });
+const curInfoWindow = ref(null);
 
 const markerImg = "/src/assets/img/marker7.png";
 const preparingImg = "/src/assets/img/preparingimg.jpg";
 const appKey = import.meta.env.VITE_KAKAO_APPKEY;
-
 var markers = [];
 var overlays = [];
 var positions = [];
@@ -34,6 +34,11 @@ watch(
   () => addedPlaces.value,
   (places) => {
     course.value = places;
+    if (places.length >= 2) {
+      drawLine();
+    } else {
+      removeDraw();
+    }
   }
 );
 watch(
@@ -88,6 +93,7 @@ const setMarkers = (places) => {
   resetMarkers();
   removeDraw();
   for (var i = 0; i < places.length; i++) {
+    console.log(places[i]);
     var placePosition = new kakao.maps.LatLng(places[i].latitude, places[i].longitude);
     if (places[i].firstImg == "") {
       places[i].firstImg = preparingImg;
@@ -129,13 +135,14 @@ const setMarkers = (places) => {
     infoAddPathBtn.classList.add("btn", "btn-outline-primary", "btn-rad");
     infoAddPathBtn.innerHTML = "경로에 추가";
     infoAddPathBtn.addEventListener("click", () => {
-      addedPlace(places[i]);
+      addPlace(i);
+      console.log(places[i]);
     });
     let infoCloseBtn = document.createElement("button");
     infoCloseBtn.classList.add("btn", "btn-outline-secondary", "mr-2", "btn-rad");
     infoCloseBtn.innerHTML = "닫기";
     infoCloseBtn.addEventListener("click", () => {
-      this.closeInfo();
+      curInfoWindow.value.close();
     });
 
     infoRowBottom.append(infoCloseBtn, infoAddPathBtn);
@@ -208,18 +215,27 @@ const addMarker = (position) => {
   });
 
   kakao.maps.event.addListener(marker, "click", function () {
-    addPlace(position);
+    // addPlace(position);
+
+    if (curInfoWindow.value != null) curInfoWindow.value.close();
+    curInfoWindow.value = infowindow;
+    curInfoWindow.value.open(map, marker);
+    // makeOverListener(map, marker, infowindow)
   });
 
-  kakao.maps.event.addListener(marker, "mouseover", makeOverListener(map, marker, infowindow));
-  kakao.maps.event.addListener(marker, "mouseout", makeOutListener(infowindow));
+  // kakao.maps.event.addListener(marker, "mouseover", makeOverListener(map, marker, infowindow));
+  // kakao.maps.event.addListener(marker, "mouseout", makeOutListener(infowindow));
 
   marker.setMap(map);
   markers.push(marker);
 };
-
+//마커 닫기
+const closeInfo = () => {
+  curWindow.value.close();
+};
 // 장소 추가 함수
-const addPlace = (position) => {
+const addPlace = (i) => {
+  let position = positions[i];
   console.log("position");
   console.log(position);
   if (duplicateCheck(position)) {

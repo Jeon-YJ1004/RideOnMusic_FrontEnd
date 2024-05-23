@@ -4,6 +4,7 @@ import { ref } from "vue";
 const emit = defineEmits(["invite-member"]);
 const friendId = ref("");
 const inviteMember = () => {
+  console.log(friendId.value);
   emit("inviteMember", friendId.value);
 };
 </script>

@@ -97,11 +97,12 @@ const memberStore = store.useMemberStore();
 // 초대 수정 코드
 function inviteMember(sendedPushMember) {
   const memberId = sessionStorage.getItem("memberId");
+  console.log("sendedPushMember " + sendedPushMember);
   socket.send(
     JSON.stringify({
       type: "invite",
       memberId: memberId,
-      sendedPushMember: sendedPushMember.value,
+      sendedPushMember: sendedPushMember,
     })
   );
 }
