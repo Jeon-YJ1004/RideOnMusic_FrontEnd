@@ -66,13 +66,12 @@ const handleSocketMessage = (eventData) => {
       addedPlaces.value = eventData.contents;
     } else if (eventData.type === 'search') {
       places.value = eventData.contents;
-    }else if (eventData.type === 'plan') {
-      router.push({ name: 'plannerlist' });
+    } else if (eventData.type === 'plan') {
+      router.push({ name: 'plannerlistJoin' , params:{memberId:eventData.memberId}});
     }
   }
 
   if (eventData.type === 'invite') {
-    console.log(eventData);
     const inviteCheck = confirm(eventData.memberId + "(님) 의 초대 수락?");
     if (inviteCheck) {
       socket.send(JSON.stringify({ 
@@ -82,10 +81,14 @@ const handleSocketMessage = (eventData) => {
       }));
     }
   }
-   else if (eventData.type === 'push' || eventData.type === 'receiver') {
+   else if (eventData.type === 'push'){
     alert("초대 완료");
     router.push({ name: 'plannerRegisterJoin' });
-  }else if(eventData.type === 'inviteError'){
+    
+   }else if (eventData.type === 'receiver') {
+    alert("초대 완료");
+    router.push({ name: 'plannerRegisterJoin' });
+   }else if(eventData.type === 'inviteError'){
     alert(eventData.errorMsg);
   }
 }

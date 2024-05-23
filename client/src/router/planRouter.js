@@ -27,6 +27,18 @@ export default [
         component: () => import("@/components/plan/PlannerList.vue"),
         beforeEnter: onlyAuthUser,
       },
+      {
+        path: "list/:memberId",
+        name: "plannerlistJoin",
+        component: () => import("@/components/plan/PlannerList.vue"),
+        beforeEnter: onlyAuthUser,
+      },
+      {
+        path: "detail/:planNo",
+        name: "plannerdetail",
+        component: () => import("@/components/plan/PlannerDetail.vue"),
+        beforeEnter: onlyAuthUser,
+      },
       // {
       //   path:"info",
       //   name:"info",
