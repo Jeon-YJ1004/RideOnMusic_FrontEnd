@@ -59,7 +59,7 @@
     </div>
     <!-- kakao map -->
     <KakaoMap :places="places" ref="kakaomap" />
-
+    <!-- 
     <div class="col-md-3 mb-3 text-center d-flex col">
       <input
         id="sendedPushMember"
@@ -77,7 +77,7 @@
       >
         초대하기
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 

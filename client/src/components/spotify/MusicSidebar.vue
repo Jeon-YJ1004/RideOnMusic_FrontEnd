@@ -43,7 +43,7 @@ onMounted(() => {
       aria-controls="sidebar-playlist"
       aria-label="Toggle navigation"
     >
-      <img src="@/assets/img/spotify.png" width="30px" />
+      <img src="@/assets/img/spotify.png" width="30px" class="sidebarBtn" />
     </div>
     <draggable
       :group="{ name: 'tracks', put: true, pull: false, removeCloneOnHide: true }"
@@ -77,7 +77,6 @@ onMounted(() => {
               <!-- //TODO - playlist에 해당하는 플리가 있을 경우 -->
               <template v-if="hasPlaylist">
                 <div style="height: 60%">
-                  <button @click="playlistStore.getPlaylist()">플리 업뎃</button>
                   <SearchModal />
                   <Playlist />
                   <button
@@ -135,7 +134,8 @@ onMounted(() => {
 body {
   overscroll-behavior: contain;
 }
-.willremove {
-  /* display: none; */
+.sidebarBtn:hover {
+  transition: all 0.2s linear;
+  transform: scale(1.3);
 }
 </style>

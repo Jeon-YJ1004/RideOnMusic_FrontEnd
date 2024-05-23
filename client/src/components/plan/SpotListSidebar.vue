@@ -7,23 +7,17 @@
     id="search-sidebar-container"
     class="map-btn d-lg-flex"
   >
-    <button
+    <div
       title="여행지 리스트"
-      style="
-        background-color: white;
-        border-radius: 100%;
-        aspect-ratio: 1/1;
-        width: 30px;
-        height: 30px;
-      "
       id="btn-search-sidebar"
       data-bs-toggle="offcanvas"
       data-bs-target="#sidebar-plan"
       aria-controls="sidebar-plan"
       aria-label="Toggle navigation"
+      class="sidebarBtn"
     >
-      <i class="bi bi-layout-sidebar-inset w-100"></i>
-    </button>
+      <img src="@/assets/img/compass.png" width="30px" class="sidebarBtn" />
+    </div>
     <div
       class="offcanvas offcanvas-start"
       tabindex="-1"
@@ -34,12 +28,7 @@
     >
       <div class="offcanvas-header" style="display: flex; flex-direction: column">
         <h4 class="offcanvas-title">
-          <img
-            src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Compass.png"
-            alt="Compass"
-            width="50"
-            height="50"
-          />
+          <img src="@/assets/img/baggage.png" alt="Compass" width="50" height="50" />
           여행 코스
         </h4>
         <hr style="width: 100%; margin-bottom: 0" />
@@ -226,24 +215,19 @@ const displayFormData = (formData) => {
 </script>
 
 <style scoped lang="scss">
-// .label {
-//   width: 100px;
-// }
-// .map-btn:hover,
-// .map-btn button:hover,
-// .map-btn button svg:hover {
-//   color: rgba(0, 0, 0, 0.7);
-// }
-// .map-btn:focus,
-// .map-btn button:focus,
-// .map-btn button svg:focus {
-//   color: rgba(0, 0, 0, 0.7);
-// }
-
-// // :deep(.b-sidebar-body) {
-// //   overflow-y: hidden !important;
-// //   overflow-x: hidden;
-// // }
+.label {
+  width: 100px;
+}
+.map-btn:hover,
+.map-btn button:hover,
+.map-btn button svg:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+.map-btn:focus,
+.map-btn button:focus,
+.map-btn button svg:focus {
+  color: rgba(0, 0, 0, 0.7);
+}
 
 .registration-form form {
   background-color: #fff;
@@ -302,5 +286,10 @@ label.check input:checked + span {
 }
 label.check span {
   border-radius: 20px;
+}
+
+.sidebarBtn:hover {
+  transition: all 0.2s linear;
+  transform: scale(1.3);
 }
 </style>
