@@ -67,7 +67,7 @@ const handleSocketMessage = (eventData) => {
     } else if (eventData.type === 'search') {
       places.value = eventData.contents;
     } else if (eventData.type === 'plan') {
-      router.push({ name: 'plannerlist' });
+      router.push({ name: 'plannerlistJoin' , params:{memberId:eventData.memberId}});
     }
   }
 
