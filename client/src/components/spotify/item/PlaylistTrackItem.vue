@@ -1,13 +1,7 @@
 <script setup>
 import { computed } from "vue";
 const props = defineProps(["track", "searchEl"]);
-const removeTrack = async () => {
-  try {
-    // await emit("savedTrackRemove", props.trackID);
-  } catch (e) {
-    console.log(e);
-  }
-};
+
 const computedTrack = computed(() => {
   if (props.track.track) {
     return props.track.track;

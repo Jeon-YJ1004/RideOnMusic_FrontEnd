@@ -74,8 +74,7 @@ import {
   chatService,
   socket,
   handleSocketMessage,
-  places,
-  addedPlaces,
+  places
 } from "@/services/ChatService.js";
 // import KakaoMap from "@/components/plan/KakaoMap.vue";
 import KakaoMap from "@/components/plan/item/KakaoMap.vue";
@@ -91,8 +90,6 @@ const http = Axios();
 
 const kakaomap = ref(null);
 const spotlistSidebar = ref(null);
-
-const memberStore = store.useMemberStore();
 
 // 초대 수정 코드
 function inviteMember(sendedPushMember) {

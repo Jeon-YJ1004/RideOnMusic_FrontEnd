@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, watch, defineExpose, ref } from "vue";
+import { onMounted, watch, defineExpose } from "vue";
 import { Axios } from "@/util/http-commons.js";
 import { useRouter } from "vue-router";
 import { chatService, socket, handleSocketMessage, addedPlaces } from "@/services/ChatService.js";
@@ -13,11 +13,11 @@ const props = defineProps({
   keyword: String,
   places: Object,
 });
-const curInfoWindow = ref(null);
 
 const markerImg = "/src/assets/img/marker7.png";
 const preparingImg = "/src/assets/img/preparingimg.jpg";
 const appKey = import.meta.env.VITE_KAKAO_APPKEY;
+
 var markers = [];
 var overlays = [];
 var positions = [];
@@ -33,23 +33,16 @@ watch(
 watch(
   () => addedPlaces.value,
   (places) => {
+    if(course.value!==places)
     course.value = places;
-    if (places.length >= 2) {
-      drawLine();
-    } else {
-      removeDraw();
-    }
+    console.log('watch addedplaces'+places)
   }
 );
 watch(
   () => course.value,
   (newPlaces, oldPlaces) => {
-    console.log(course.value);
-    if (newPlaces.length >= 2) {
-      drawLine();
-    } else {
-      removeDraw();
-    }
+    console.log(newPlaces);
+    updateMap()
   },
   { deep: true }
 );
@@ -93,92 +86,10 @@ const setMarkers = (places) => {
   resetMarkers();
   removeDraw();
   for (var i = 0; i < places.length; i++) {
-    console.log(places[i]);
     var placePosition = new kakao.maps.LatLng(places[i].latitude, places[i].longitude);
     if (places[i].firstImg == "") {
       places[i].firstImg = preparingImg;
     }
-    let infoContent = document.createElement("div");
-    infoContent.classList.add(
-      "p-2",
-      "d-inline-block",
-      "text-left",
-      "m-1",
-      "mb-2",
-      "info-container"
-    );
-    infoContent.setAttribute("id", "info-container");
-
-    let infoRowTop = document.createElement("div");
-    infoRowTop.classList.add(
-      "pl-3",
-      "pr-3",
-      "row",
-      "flex-row",
-      "flex-nowrap",
-      "justify-content-between",
-      "attr"
-    );
-
-    let infoRowBottom = document.createElement("div");
-    infoRowBottom.classList.add(
-      "pl-4",
-      "pr-4",
-      "mt-2",
-      "row",
-      "flex-row",
-      "flex-nowrap",
-      "justify-content-between"
-    );
-
-    let infoAddPathBtn = document.createElement("button");
-    infoAddPathBtn.classList.add("btn", "btn-outline-primary", "btn-rad");
-    infoAddPathBtn.innerHTML = "경로에 추가";
-    infoAddPathBtn.addEventListener("click", () => {
-      addPlace(i);
-      console.log(places[i]);
-    });
-    let infoCloseBtn = document.createElement("button");
-    infoCloseBtn.classList.add("btn", "btn-outline-secondary", "mr-2", "btn-rad");
-    infoCloseBtn.innerHTML = "닫기";
-    infoCloseBtn.addEventListener("click", () => {
-      curInfoWindow.value.close();
-    });
-
-    infoRowBottom.append(infoCloseBtn, infoAddPathBtn);
-
-    let infoLeft = document.createElement("div");
-
-    let infoLeftBottom = document.createElement("div");
-    let infoTitle = document.createElement("h5");
-    infoTitle.classList.add("attr-title");
-    infoTitle.innerHTML = places[i].title;
-    let infoAddr = document.createElement("h6");
-    infoAddr.classList.add("small-font");
-    infoAddr.innerHTML = places[i].addr1 + " " + places[i].addr2;
-    let infoRight = document.createElement("div");
-    infoRight.classList.add("p-2");
-    let infoImg = document.createElement("img");
-    infoImg.src = places[i].firstImg;
-    infoImg.width = 100;
-    infoImg.style = "aspect-ratio:1";
-
-    infoLeftBottom.append(infoAddr);
-    infoLeft.append(infoTitle, infoLeftBottom);
-    infoLeft.classList.add(
-      "p-1",
-      "pl-3",
-      "pr-3",
-      "row",
-      "flex-column",
-      "flex-wrap",
-      "justify-content-between"
-    );
-
-    infoRight.append(infoImg);
-    infoRowTop.append(infoLeft, infoRight);
-    infoContent.append(infoRowTop, infoRowBottom);
-
     positions.push({
       contentId: places[i].contentId,
       idx: i,
@@ -186,10 +97,18 @@ const setMarkers = (places) => {
       addr: places[i].addr1,
       img: places[i].firstImg,
       //TODO: 이 부분도 컴포넌트로 뺄 수 있나..?
-      content: infoContent,
+      content:
+        `<div style="display:flex">
+          <div class="p-1 pl-3 row flex-column justify-content-between">
+            <h5 class="attr-title"> ${ places[i].title}</h5>
+            <h6 class="small-font">${places[i].addr1} ${places[i].addr2}</h6>
+          </div>
+          <div class="p-2">
+            <img src='${places[i].firstImg}'  style="width:80px;aspect-ratio:1;"/>
+          </div>
+        </div>`,
       latlng: placePosition,
     });
-
     addMarker(positions[i]);
     bounds.extend(placePosition);
   }
@@ -215,27 +134,18 @@ const addMarker = (position) => {
   });
 
   kakao.maps.event.addListener(marker, "click", function () {
-    // addPlace(position);
-
-    if (curInfoWindow.value != null) curInfoWindow.value.close();
-    curInfoWindow.value = infowindow;
-    curInfoWindow.value.open(map, marker);
-    // makeOverListener(map, marker, infowindow)
+    addPlace(position);
   });
 
-  // kakao.maps.event.addListener(marker, "mouseover", makeOverListener(map, marker, infowindow));
-  // kakao.maps.event.addListener(marker, "mouseout", makeOutListener(infowindow));
+  kakao.maps.event.addListener(marker, "mouseover", makeOverListener(map, marker, infowindow));
+  kakao.maps.event.addListener(marker, "mouseout", makeOutListener(infowindow));
 
   marker.setMap(map);
   markers.push(marker);
 };
-//마커 닫기
-const closeInfo = () => {
-  curWindow.value.close();
-};
+
 // 장소 추가 함수
-const addPlace = (i) => {
-  let position = positions[i];
+const addPlace = (position) => {
   console.log("position");
   console.log(position);
   if (duplicateCheck(position)) {
@@ -248,6 +158,8 @@ const addPlace = (i) => {
     //   latitude: position.latlng.La,
     //   longitude: position.latlng.Ma,
     // });
+
+    updateMap();
     course.value.push({
       contentId: position.contentId,
       idx: position.idx,
@@ -257,8 +169,6 @@ const addPlace = (i) => {
       latitude: position.latlng.La,
       longitude: position.latlng.Ma,
     });
-    course.value = addedPlaces.value;
-    updateMap();
   }
   sendPathUpdate();
 };
@@ -267,7 +177,8 @@ const sendPathUpdate = () => {
   socket.send(
     JSON.stringify({
       type: "path",
-      contents: course.value,
+      contents: addedPlaces.value,
+      memberId:sessionStorage.getItem('memberId')
     })
   );
 };
@@ -280,6 +191,7 @@ const duplicateCheck = (position) => {
 // 지도 업데이트 함수
 const updateMap = () => {
   console.log("updateMap");
+  // console.log(course.value);
   if (course.value.length >= 2) {
     drawLine();
   } else {

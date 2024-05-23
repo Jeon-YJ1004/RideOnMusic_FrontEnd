@@ -139,7 +139,6 @@ const { course } = storeToRefs(planStore);
 const memberStore = store.useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 const playlistStore = store.usePlaylistStore();
-
 const router = useRouter();
 const props = defineProps({
   keyword: String,
@@ -202,6 +201,7 @@ const handleFormSubmit = async () => {
         memberId: userInfo.value.memberId
       })
     );
+    router.push({ name: 'plannerlist' });
   } catch (error) {
     console.error("Error submitting form:", error);
   }

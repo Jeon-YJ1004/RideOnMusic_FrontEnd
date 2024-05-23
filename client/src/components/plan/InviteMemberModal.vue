@@ -15,13 +15,13 @@ const inviteMember = () => {
       size="md"
       id="btn-invite"
       data-bs-toggle="modal"
-      data-bs-target="#creatPLModal"
+      data-bs-target="#invitefriendModal"
       style="width: auto"
     >
-      <img src="@/assets/img/spotify.png" width="30px" class="sidebarBtn" />
+      <img src="@/assets/img/letter.png" width="30px" class="sidebarBtn" />
     </div>
 
-    <template class="modal fade" id="creatPLModal" tabindex="-1" aria-hidden="true">
+    <template class="modal fade" id="invitefriendModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-dark" style="height: 200px">
           <div class="modal-body registration-form">

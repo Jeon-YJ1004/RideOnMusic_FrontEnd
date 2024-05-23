@@ -5,13 +5,13 @@ class ChatService {
   constructor() {
     this.ws = null;
     this.callbacks = {};
+    this.memberId=null;
   }
-
   connect() {
     const webSocketUrl = import.meta.env.VITE_WEB_SOCKET_URL;
     // const memberId = sessionStorage.getItem('memberId');
-    const memberId = sessionStorage.getItem('memberId');
-    this.ws = new WebSocket(webSocketUrl + `?memberId=${memberId}`);
+    this.memberId = sessionStorage.getItem('memberId');
+    this.ws = new WebSocket(webSocketUrl + `?memberId=${this.memberId}`);
 
     this.ws.onmessage = (event) => {
       const message = event.data;
@@ -63,10 +63,14 @@ const handleSocketMessage = (eventData) => {
   const lastSegment = fullPath.substring(fullPath.lastIndexOf('/') + 1);
   if (lastSegment === 'joinPlan') {
     if (eventData.type === 'path') {
+      console.log(eventData);
       addedPlaces.value = eventData.contents;
+      addedPlaces.value
     } else if (eventData.type === 'search') {
+      console.log(eventData)
       places.value = eventData.contents;
     } else if (eventData.type === 'plan') {
+      console.log(eventData)
       router.push({ name: 'plannerlistJoin' , params:{memberId:eventData.memberId}});
     }
   }
